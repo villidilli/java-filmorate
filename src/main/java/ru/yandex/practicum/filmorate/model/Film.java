@@ -2,23 +2,22 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.Duration;
 import java.time.LocalDate;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Film {
     @Positive
-    private final int id;
+    @EqualsAndHashCode.Include
+    private int id;
     @NotBlank
     private final String name;
+    @Size(max=200)
     private final String description;
     private final LocalDate releaseDate;
     @Positive

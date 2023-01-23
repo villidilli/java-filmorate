@@ -40,7 +40,7 @@ public class UserController {
         if (user.getName() == null) user.setName(user.getLogin());
     }
 
-    private void checkUserAvailability(User user) throws NotFoundException {
+    private void checkUserAvailability(User user) throws NotFoundException, ValidationException {
         Integer id = user.getId();
         if (id == null) throw new ValidationException(ID_NOT_IS_BLANK);
         if (users.get(id) == null) throw new NotFoundException(NotFoundException.NOT_FOUND);
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     private void loggingException(Exception exception) {
-        log.debug(exception.getMessage(), exception);
+        log.debug("[" + exception.getClass().getSimpleName() + "] " + exception.getMessage());
     }
 
     @GetMapping

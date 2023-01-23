@@ -15,10 +15,9 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class User {
     @Positive
-    private  Integer id;
+    private Integer id;
     @Email
     @NotBlank
     private String email;
