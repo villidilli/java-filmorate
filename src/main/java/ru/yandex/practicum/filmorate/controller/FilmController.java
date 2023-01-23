@@ -66,10 +66,9 @@ public class FilmController {
     @ResponseBody
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         try {
-            checkLoginForSpace(user);
-            checkNameForBlank(user);
+            checkReleaseDate(film);
             checkUserAvailability(user);
-            users.put(user.getId(), user);
+            films.put(film.getId(), film);
             loggingChanges(user);
             return ResponseEntity.ok(film);
         } catch (ValidationException e) {
