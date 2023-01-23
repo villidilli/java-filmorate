@@ -52,7 +52,7 @@ public class UserController {
         return new ArrayList<>(users.values());
     }
 
-    @PostMapping("/user")
+    @PostMapping
     @ResponseBody
     public ResponseEntity create(@Valid @RequestBody  User user) {
         try {
@@ -70,7 +70,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/user")
+    @PutMapping
     @ResponseBody
     public ResponseEntity update(@Valid @RequestBody User user, @RequestParam("id") int paramID) {
         try {
