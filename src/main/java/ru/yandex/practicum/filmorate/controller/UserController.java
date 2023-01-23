@@ -1,21 +1,26 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.*;
+
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.exception.NotFoundException.*;
+import static ru.yandex.practicum.filmorate.exception.ValidationException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.LOGIN_NOT_HAVE_SPACE;
 
 
@@ -24,14 +29,8 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.LOGIN_
 @RequestMapping("/users")
 @Validated
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-
     private static int generatorID = 1;
-
-    private void additionalUserValidate(User user) throws ValidationException {
-        if (user.getLogin().contains(" ")) throw new ValidationException(LOGIN_NOT_HAVE_SPACE);
-
-    }
+    private final Map<Integer, User> users = new HashMap<>();
 
     private void checkLoginForSpace(User user) throws ValidationException {
         if (user.getLogin().contains(" ")) throw new ValidationException(LOGIN_NOT_HAVE_SPACE);
@@ -41,51 +40,60 @@ public class UserController {
         if (user.getName() == null) user.setName(user.getLogin());
     }
 
-    private void checkAvailableByID(int ID) throws NotFoundException {
-        if (users.get(ID) == null) throw new NotFoundException(NOT_FOUND);
+    private void checkUserAvailability(User user) throws NotFoundException {
+        Integer id = user.getId();
+        if (id == null) throw new ValidationException(ID_NOT_IS_BLANK);
+        if (users.get(id) == null) throw new NotFoundException(NotFoundException.NOT_FOUND);
     }
 
+    private void loggingChanges(User user) {
+        log.debug("Записан объект: {}", user);
+        log.debug("Всего пользователей: [{}]", users.size());
+        log.debug("ID generator [{}]", generatorID);
+    }
+
+    private void loggingException(Exception exception) {
+        log.debug(exception.getMessage(), exception);
+    }
 
     @GetMapping
     public List<User> getAllUsers() {
-        log.debug("Текущее количество пользователей: [{}]", users.size());
+        log.debug("Всего пользователей: [{}]", users.size());
         return new ArrayList<>(users.values());
     }
 
     @PostMapping
     @ResponseBody
-    public ResponseEntity create(@Valid @RequestBody  User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         try {
             checkLoginForSpace(user);
             checkNameForBlank(user);
             user.setId(generatorID++);
             users.put(user.getId(), user);
-            log.debug("Следующее значение ID [{}]", generatorID);
-            log.debug("Создан пользователь: {}", user);
-            log.debug("Количество пользователей: [{}]", users.size());
-            return ResponseEntity.status(HttpStatus.OK).body(user);
+            loggingChanges(user);
+            return ResponseEntity.ok(user);
         } catch (ValidationException e) {
-            log.debug(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            loggingException(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
         }
     }
 
     @PutMapping
     @ResponseBody
-    public ResponseEntity update(@Valid @RequestBody User user, @RequestParam("id") int paramID) {
+    public ResponseEntity<User> update(@Valid @RequestBody User user) {
         try {
-            log.debug("Передан параметр: ID = [{}]", paramID);
             checkLoginForSpace(user);
             checkNameForBlank(user);
-            checkAvailableByID(paramID);
-            user.setId(paramID);
-            users.put(paramID, user);
-            log.debug("Обновлен пользователь: {}", user);
-            log.debug("Количество пользователей: [{}]", users.size());
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        } catch (ValidationException | NotFoundException e) {
-            log.debug(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            checkUserAvailability(user);
+            users.put(user.getId(), user);
+            loggingChanges(user);
+            return ResponseEntity.ok(user);
+        } catch (ValidationException e) {
+            loggingException(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
+        } catch (NotFoundException e) {
+            loggingException(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
         }
     }
 }

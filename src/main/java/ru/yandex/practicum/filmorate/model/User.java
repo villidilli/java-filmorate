@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @Data
 @AllArgsConstructor
@@ -22,12 +22,9 @@ public class User {
     @Email
     @NotBlank
     private String email;
-
     @NotBlank
     private String login;
     private String name;
-
-    @DateTimeFormat(pattern = "dd.MM.yyyy") //todo надо ли ?
     @Past
     private LocalDate birthday;
 }
