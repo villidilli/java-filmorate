@@ -10,7 +10,6 @@ import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
 public class Film {
     @Positive
     @EqualsAndHashCode.Include

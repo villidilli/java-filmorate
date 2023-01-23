@@ -14,9 +14,10 @@ import java.time.LocalDate;
 
 
 @Data
-@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @Positive
+    @EqualsAndHashCode.Include
     private Integer id;
     @Email
     @NotBlank
