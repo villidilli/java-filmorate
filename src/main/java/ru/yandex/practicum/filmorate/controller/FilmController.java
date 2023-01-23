@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.yandex.practicum.filmorate.exception.ValidationException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.RELEASE_DATE_INVALID;
 
 @RestController
@@ -31,9 +32,15 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA)) throw new ValidationException(RELEASE_DATE_INVALID);
     }
 
+    private void checkFilmAvailability(Film film) throws NotFoundException, ValidationException {
+        Integer id = film.getId();
+        if (id == null) throw new ValidationException(ID_NOT_IS_BLANK);
+        if (films.get(id) == null) throw new NotFoundException(NotFoundException.NOT_FOUND);
+    }
+
     private void loggingChanges(Film film) {
         log.debug("Записан объект: {}", film);
-        log.debug("Всего пользователей: [{}]", films.size());
+        log.debug("Всего фильмов: [{}]", films.size());
         log.debug("ID generator [{}]", generatorID);
     }
 
@@ -43,7 +50,7 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getAllFilms() {
-        log.debug("Всего пользователей: [{}]", films.size());
+        log.debug("Всего фильмов: [{}]", films.size());
         return new ArrayList<>(films.values());
     }
 
@@ -67,9 +74,9 @@ public class FilmController {
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         try {
             checkReleaseDate(film);
-            checkUserAvailability(user);
+            checkFilmAvailability(film);
             films.put(film.getId(), film);
-            loggingChanges(user);
+            loggingChanges(film);
             return ResponseEntity.ok(film);
         } catch (ValidationException e) {
             loggingException(e);

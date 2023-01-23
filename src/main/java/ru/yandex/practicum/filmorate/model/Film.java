@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.*;
-import java.time.Duration;
+
 import java.time.LocalDate;
 
 @Data
@@ -14,12 +14,12 @@ import java.time.LocalDate;
 public class Film {
     @Positive
     @EqualsAndHashCode.Include
-    private int id;
+    private Integer id;
     @NotBlank
-    private final String name;
-    @Size(max=200)
-    private final String description;
-    private final LocalDate releaseDate;
+    private String name;
+    @Size(max = 200)
+    private String description;
+    private LocalDate releaseDate;
     @Positive
-    private final Duration duration;
+    private Long duration;
 }
