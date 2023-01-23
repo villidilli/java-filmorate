@@ -61,28 +61,30 @@ public class UserController {
             user.setId(generatorID++);
             users.put(user.getId(), user);
             log.debug("Следующее значение ID [{}]", generatorID);
+            log.debug("Создан пользователь: {}", user);
             log.debug("Количество пользователей: [{}]", users.size());
-            log.debug("Сохранено: {}", user);
             return ResponseEntity.status(HttpStatus.OK).body(user);
         } catch (ValidationException e) {
+            log.debug(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PutMapping("/user")
     @ResponseBody
-    public ResponseEntity update(@Valid @RequestBody User user, @RequestParam("id") int ID) {
+    public ResponseEntity update(@Valid @RequestBody User user, @RequestParam("id") int paramID) {
         try {
-            log.debug("Запрошено обновление для ID [{}]", ID);
+            log.debug("Передан параметр: ID = [{}]", paramID);
             checkLoginForSpace(user);
             checkNameForBlank(user);
-            checkAvailableByID(ID);
-            user.setId(ID);
-            users.put(ID, user);
+            checkAvailableByID(paramID);
+            user.setId(paramID);
+            users.put(paramID, user);
+            log.debug("Обновлен пользователь: {}", user);
             log.debug("Количество пользователей: [{}]", users.size());
-            log.debug("Обновлено: {}", user);
             return ResponseEntity.status(HttpStatus.OK).body(user);
         } catch (ValidationException | NotFoundException e) {
+            log.debug(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
