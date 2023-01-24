@@ -63,7 +63,6 @@ public class FilmController {
     }
 
     @PostMapping
-    @ResponseBody
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         try {
             isReleaseDateAfter(film);
@@ -80,7 +79,6 @@ public class FilmController {
     }
 
     @PutMapping
-    @ResponseBody
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         try {
             isReleaseDateAfter(film);

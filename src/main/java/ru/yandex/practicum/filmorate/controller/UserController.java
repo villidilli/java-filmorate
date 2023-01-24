@@ -66,7 +66,6 @@ public class UserController {
     }
 
     @PostMapping
-    @ResponseBody
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         try {
             isLoginHasSpace(user);
@@ -84,7 +83,6 @@ public class UserController {
     }
 
     @PutMapping
-    @ResponseBody
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
         try {
             isLoginHasSpace(user);
