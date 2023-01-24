@@ -29,36 +29,39 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.LOGIN_
 @RequestMapping("/users")
 @Validated
 public class UserController {
-    private static int generatorID = 1;
+    private int generatorID = 1;
+    public static final String LOG_ID_GEN = "ID generator [{}]";
+    public static final String LOG_WRITE_OBJECT = "Записан объект: [{}]";
+    public static final String LOG_SIZE_USERS = "Всего пользователей: [{}]";
+    public static final String LOG_VALIDATION_SUCCESS = "Валидация пройдена успешно";
     private final Map<Integer, User> users = new HashMap<>();
 
-    private void checkLoginForSpace(User user) throws ValidationException {
+    private void isLoginHasSpace(User user) throws ValidationException {
         if (user.getLogin().contains(" ")) throw new ValidationException(LOGIN_NOT_HAVE_SPACE);
     }
 
-    private void checkNameForBlank(User user) {
+    private void isNameBlank(User user) {
         if (user.getName() == null) user.setName(user.getLogin());
     }
 
-    private void checkUserAvailability(User user) throws NotFoundException, ValidationException {
+    private void isUserExist(User user) throws NotFoundException, ValidationException {
         Integer id = user.getId();
         if (id == null) throw new ValidationException(ID_NOT_IS_BLANK);
         if (users.get(id) == null) throw new NotFoundException(NotFoundException.NOT_FOUND);
     }
 
-    private void loggingChanges(User user) {
-        log.debug("Записан объект: {}", user);
-        log.debug("Всего пользователей: [{}]", users.size());
-        log.debug("ID generator [{}]", generatorID);
+    private void logVariablesCondition() {
+        log.debug(LOG_SIZE_USERS, users.size());
+        log.debug(LOG_ID_GEN, generatorID);
     }
 
-    private void loggingException(Exception exception) {
-        log.debug("[" + exception.getClass().getSimpleName() + "] " + exception.getMessage());
+    private void logException(HttpStatus status, Exception exception) {
+        log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
     }
 
     @GetMapping
     public List<User> getAllUsers() {
-        log.debug("Всего пользователей: [{}]", users.size());
+        logVariablesCondition();
         return new ArrayList<>(users.values());
     }
 
@@ -66,14 +69,16 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         try {
-            checkLoginForSpace(user);
-            checkNameForBlank(user);
+            isLoginHasSpace(user);
+            isNameBlank(user);
+            log.debug(LOG_VALIDATION_SUCCESS);
             user.setId(generatorID++);
             users.put(user.getId(), user);
-            loggingChanges(user);
+            log.debug(LOG_WRITE_OBJECT, user);
+            logVariablesCondition();
             return ResponseEntity.ok(user);
         } catch (ValidationException e) {
-            loggingException(e);
+            logException(HttpStatus.BAD_REQUEST, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
         }
     }
@@ -82,17 +87,19 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
         try {
-            checkLoginForSpace(user);
-            checkNameForBlank(user);
-            checkUserAvailability(user);
+            isLoginHasSpace(user);
+            isNameBlank(user);
+            isUserExist(user);
+            log.debug(LOG_VALIDATION_SUCCESS);
             users.put(user.getId(), user);
-            loggingChanges(user);
+            log.debug(LOG_WRITE_OBJECT, user);
+            logVariablesCondition();
             return ResponseEntity.ok(user);
         } catch (ValidationException e) {
-            loggingException(e);
+            logException(HttpStatus.BAD_REQUEST, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
         } catch (NotFoundException e) {
-            loggingException(e);
+            logException(HttpStatus.NOT_FOUND, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
         }
     }

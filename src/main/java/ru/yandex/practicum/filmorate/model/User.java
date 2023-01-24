@@ -13,12 +13,12 @@ public class User {
     @Positive
     @EqualsAndHashCode.Include
     private Integer id;
-    @Email
-    @NotBlank
-    private String email;
     @NotBlank
     private String login;
     private String name;
+    @Email
+    @NotBlank
+    private String email;
     @Past
     private LocalDate birthday;
 }
