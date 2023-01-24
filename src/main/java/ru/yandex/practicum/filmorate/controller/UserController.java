@@ -26,15 +26,15 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.LOGIN_
 
 @RestController
 @Slf4j
-@RequestMapping("/users")
 @Validated
+@RequestMapping("/users")
 public class UserController {
-    private int generatorID = 1;
     public static final String LOG_ID_GEN = "ID generator [{}]";
     public static final String LOG_WRITE_OBJECT = "Записан объект: [{}]";
     public static final String LOG_SIZE_USERS = "Всего пользователей: [{}]";
     public static final String LOG_VALIDATION_SUCCESS = "Валидация пройдена успешно";
     private final Map<Integer, User> users = new HashMap<>();
+    private int generatorID = 1;
 
     private void isLoginHasSpace(User user) throws ValidationException {
         if (user.getLogin().contains(" ")) throw new ValidationException(LOGIN_NOT_HAVE_SPACE);

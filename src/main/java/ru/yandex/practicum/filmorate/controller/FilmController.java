@@ -33,9 +33,9 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.RELEAS
 @Validated
 public class FilmController {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
-    public static final String LOG_SIZE_FILMS = "Всего фильмов: [{}]";
-    private int generatorID = 1;
+    public final String LOG_SIZE_FILMS = "Всего фильмов: [{}]";
     private final Map<Integer, Film> films = new HashMap<>();
+    private int generatorID = 1;
 
     private void isReleaseDateAfter(Film film) {
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA)) throw new ValidationException(RELEASE_DATE_INVALID);
