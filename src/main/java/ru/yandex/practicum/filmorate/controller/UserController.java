@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.LOGIN_NOT_HAVE_SPACE;
 
@@ -29,10 +30,6 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.LOGIN_
 @Validated
 @RequestMapping("/users")
 public class UserController {
-    public static final String LOG_ID_GEN = "ID generator [{}]";
-    public static final String LOG_WRITE_OBJECT = "Записан объект: [{}]";
-    public static final String LOG_SIZE_USERS = "Всего пользователей: [{}]";
-    public static final String LOG_VALIDATION_SUCCESS = "Валидация пройдена успешно";
     private final Map<Integer, User> users = new HashMap<>();
     private int generatorID = 1;
 
@@ -51,8 +48,8 @@ public class UserController {
     }
 
     private void logVariablesCondition() {
-        log.debug(LOG_SIZE_USERS, users.size());
-        log.debug(LOG_ID_GEN, generatorID);
+        log.debug(LOG_SIZE_USERS.message, users.size());
+        log.debug(LOG_ID_GEN.message, generatorID);
     }
 
     private void logException(HttpStatus status, Exception exception) {
@@ -70,10 +67,10 @@ public class UserController {
         try {
             isLoginHasSpace(user);
             isNameBlank(user);
-            log.debug(LOG_VALIDATION_SUCCESS);
+            log.debug(LOG_VALIDATION_SUCCESS.message);
             user.setId(generatorID++);
             users.put(user.getId(), user);
-            log.debug(LOG_WRITE_OBJECT, user);
+            log.debug(LOG_WRITE_OBJECT.message, user);
             logVariablesCondition();
             return ResponseEntity.ok(user);
         } catch (ValidationException e) {
@@ -88,9 +85,9 @@ public class UserController {
             isLoginHasSpace(user);
             isNameBlank(user);
             isUserExist(user);
-            log.debug(LOG_VALIDATION_SUCCESS);
+            log.debug(LOG_VALIDATION_SUCCESS.message);
             users.put(user.getId(), user);
-            log.debug(LOG_WRITE_OBJECT, user);
+            log.debug(LOG_WRITE_OBJECT.message, user);
             logVariablesCondition();
             return ResponseEntity.ok(user);
         } catch (ValidationException e) {

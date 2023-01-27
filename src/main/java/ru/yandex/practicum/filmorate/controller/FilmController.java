@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.controller.UserController.*;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationException.ID_NOT_IS_BLANK;
@@ -33,7 +34,6 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.RELEAS
 @Validated
 public class FilmController {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
-    public final String LOG_SIZE_FILMS = "Всего фильмов: [{}]";
     private final Map<Integer, Film> films = new HashMap<>();
     private int generatorID = 1;
 
@@ -48,8 +48,8 @@ public class FilmController {
     }
 
     private void logVariablesCondition() {
-        log.debug(LOG_SIZE_FILMS, films.size());
-        log.debug(LOG_ID_GEN, generatorID);
+        log.debug(LOG_SIZE_FILMS.message, films.size());
+        log.debug(LOG_ID_GEN.message, generatorID);
     }
 
     private void logException(HttpStatus status, Exception exception) {
@@ -66,10 +66,10 @@ public class FilmController {
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         try {
             isReleaseDateAfter(film);
-            log.debug(LOG_VALIDATION_SUCCESS);
+            log.debug(LOG_VALIDATION_SUCCESS.message);
             film.setId(generatorID++);
             films.put(film.getId(), film);
-            log.debug(LOG_WRITE_OBJECT, film);
+            log.debug(LOG_WRITE_OBJECT.message, film);
             logVariablesCondition();
             return ResponseEntity.ok(film);
         } catch (ValidationException e) {
@@ -83,9 +83,9 @@ public class FilmController {
         try {
             isReleaseDateAfter(film);
             isFilmExist(film);
-            log.debug(LOG_VALIDATION_SUCCESS);
+            log.debug(LOG_VALIDATION_SUCCESS.message);
             films.put(film.getId(), film);
-            log.debug(LOG_WRITE_OBJECT, film);
+            log.debug(LOG_WRITE_OBJECT.message, film);
             logVariablesCondition();
             return ResponseEntity.ok(film);
         } catch (ValidationException e) {
