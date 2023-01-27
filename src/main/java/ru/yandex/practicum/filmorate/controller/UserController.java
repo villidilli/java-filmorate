@@ -9,7 +9,6 @@ import org.springframework.validation.annotation.Validated;
 
 import org.springframework.web.bind.annotation.*;
 
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -21,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
-import static ru.yandex.practicum.filmorate.exception.ValidationException.ID_NOT_IS_BLANK;
-import static ru.yandex.practicum.filmorate.exception.ValidationException.LOGIN_NOT_HAVE_SPACE;
+import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 
 @RestController
@@ -41,10 +39,10 @@ public class UserController {
         if (user.getName() == null) user.setName(user.getLogin());
     }
 
-    private void isUserExist(User user) throws NotFoundException, ValidationException {
+    private void isUserExist(User user) throws ValidationException {
         Integer id = user.getId();
         if (id == null) throw new ValidationException(ID_NOT_IS_BLANK);
-        if (users.get(id) == null) throw new NotFoundException(NotFoundException.NOT_FOUND);
+        if (users.get(id) == null) throw new ValidationException(NOT_FOUND);
     }
 
     private void logVariablesCondition() {
@@ -91,9 +89,6 @@ public class UserController {
             logVariablesCondition();
             return ResponseEntity.ok(user);
         } catch (ValidationException e) {
-            logException(HttpStatus.BAD_REQUEST, e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
-        } catch (NotFoundException e) {
             logException(HttpStatus.NOT_FOUND, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
         }

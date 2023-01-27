@@ -9,7 +9,6 @@ import org.springframework.validation.annotation.Validated;
 
 import org.springframework.web.bind.annotation.*;
 
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
@@ -23,10 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
-import static ru.yandex.practicum.filmorate.controller.UserController.*;
-
-import static ru.yandex.practicum.filmorate.exception.ValidationException.ID_NOT_IS_BLANK;
-import static ru.yandex.practicum.filmorate.exception.ValidationException.RELEASE_DATE_INVALID;
+import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 @RestController
 @Slf4j
@@ -41,10 +37,10 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA)) throw new ValidationException(RELEASE_DATE_INVALID);
     }
 
-    private void isFilmExist(Film film) throws NotFoundException, ValidationException {
+    private void isFilmExist(Film film) throws ValidationException {
         Integer id = film.getId();
         if (id == null) throw new ValidationException(ID_NOT_IS_BLANK);
-        if (films.get(id) == null) throw new NotFoundException(NotFoundException.NOT_FOUND);
+        if (films.get(id) == null) throw new ValidationException(NOT_FOUND);
     }
 
     private void logVariablesCondition() {
@@ -89,9 +85,6 @@ public class FilmController {
             logVariablesCondition();
             return ResponseEntity.ok(film);
         } catch (ValidationException e) {
-            logException(HttpStatus.BAD_REQUEST, e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(film);
-        } catch (NotFoundException e) {
             logException(HttpStatus.NOT_FOUND, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(film);
         }
