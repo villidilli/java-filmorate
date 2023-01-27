@@ -46,7 +46,7 @@ public class UserController {
     }
 
     private void logVariablesCondition() {
-        log.debug(LOG_SIZE_USERS.message, users.size());
+        log.info(LOG_SIZE_USERS.message, users.size());
         log.debug(LOG_ID_GEN.message, generatorID);
     }
 

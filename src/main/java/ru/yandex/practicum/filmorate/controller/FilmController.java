@@ -44,7 +44,7 @@ public class FilmController {
     }
 
     private void logVariablesCondition() {
-        log.debug(LOG_SIZE_FILMS.message, films.size());
+        log.info(LOG_SIZE_FILMS.message, films.size());
         log.debug(LOG_ID_GEN.message, generatorID);
     }
 
