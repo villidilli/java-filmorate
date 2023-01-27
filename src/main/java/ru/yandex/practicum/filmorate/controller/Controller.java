@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,14 +18,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.controller.Message.LOG_VALIDATION_SUCCESS;
-import static ru.yandex.practicum.filmorate.controller.Message.LOG_WRITE_OBJECT;
+import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.NOT_FOUND;
 
+@Slf4j
 public abstract class Controller<T extends Requestable> {
 	protected final Map<Integer, T> objects = new HashMap<>();
 	protected int generatorID = 1;
+
+	protected abstract void validate(T obj) throws ValidationException;
+
+	private void logException(HttpStatus status, Exception exception) {
+		log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
+	}
+
+	private void logVariablesCondition() {
+        log.info(LOG_SIZE_FILMS.message, objects.size());
+		log.debug(LOG_ID_GEN.message, generatorID);
+	}
 
 	private void isExist(T obj) throws ValidationException {
 		Integer id = obj.getId();
@@ -40,6 +52,7 @@ public abstract class Controller<T extends Requestable> {
 	@PostMapping
 	public ResponseEntity<Requestable> create(@Valid @RequestBody T obj) {
 		try {
+			validate(obj);
 			obj.setId(generatorID++);
 			objects.put(obj.getId(), obj);
 			return ResponseEntity.ok(obj);
@@ -51,6 +64,7 @@ public abstract class Controller<T extends Requestable> {
 	@PutMapping
 	public ResponseEntity<Requestable> update(@Valid @RequestBody T obj) {
 		try {
+			validate(obj);
 			isExist(obj);
 			objects.put(obj.getId(), obj);
 			return ResponseEntity.ok(obj);
