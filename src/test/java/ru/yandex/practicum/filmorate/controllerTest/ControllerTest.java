@@ -1,15 +1,13 @@
 package ru.yandex.practicum.filmorate.controllerTest;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.yandex.practicum.filmorate.controller.Controller;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Requestable;
-import ru.yandex.practicum.filmorate.model.User;
+
+import ru.yandex.practicum.filmorate.controller.*;
+
+import ru.yandex.practicum.filmorate.model.*;
 
 import java.time.LocalDate;
 
