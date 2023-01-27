@@ -13,7 +13,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.RELEAS
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Film extends Requestable implements Validatable {
+public class Film extends Requestable {
     @Positive
     @EqualsAndHashCode.Include
     private Integer id;
