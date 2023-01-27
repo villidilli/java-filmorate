@@ -33,7 +33,7 @@ public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
     private int generatorID = 1;
 
-    private void isReleaseDateAfter(Film film) {
+    private void validate(Film film) throws ValidationException {
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA)) throw new ValidationException(RELEASE_DATE_INVALID);
     }
 
@@ -61,7 +61,7 @@ public class FilmController {
     @PostMapping
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         try {
-            isReleaseDateAfter(film);
+            validate(film);
             log.debug(LOG_VALIDATION_SUCCESS.message);
             film.setId(generatorID++);
             films.put(film.getId(), film);
@@ -77,7 +77,7 @@ public class FilmController {
     @PutMapping
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         try {
-            isReleaseDateAfter(film);
+            validate(film);
             isFilmExist(film);
             log.debug(LOG_VALIDATION_SUCCESS.message);
             films.put(film.getId(), film);

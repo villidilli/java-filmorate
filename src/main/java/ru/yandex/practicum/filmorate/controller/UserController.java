@@ -31,11 +31,8 @@ public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
     private int generatorID = 1;
 
-    private void isLoginHasSpace(User user) throws ValidationException {
+    private void validate(User user) throws ValidationException{
         if (user.getLogin().contains(" ")) throw new ValidationException(LOGIN_NOT_HAVE_SPACE);
-    }
-
-    private void isNameBlank(User user) {
         if (user.getName() == null) user.setName(user.getLogin());
     }
 
@@ -63,8 +60,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         try {
-            isLoginHasSpace(user);
-            isNameBlank(user);
+            validate(user);
             log.debug(LOG_VALIDATION_SUCCESS.message);
             user.setId(generatorID++);
             users.put(user.getId(), user);
@@ -80,8 +76,7 @@ public class UserController {
     @PutMapping
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
         try {
-            isLoginHasSpace(user);
-            isNameBlank(user);
+            validate(user);
             isUserExist(user);
             log.debug(LOG_VALIDATION_SUCCESS.message);
             users.put(user.getId(), user);
