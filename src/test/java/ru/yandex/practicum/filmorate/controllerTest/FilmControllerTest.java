@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate.controllerTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,7 +50,7 @@ public class FilmControllerTest {
         film1.setId(1);
         response = controller.update(film1);
         actualFilm = response.getBody();
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals(1, actualFilm.getId());
         assertEquals(film1.getName(), actualFilm.getName());
         assertEquals(film1.getDescription(), actualFilm.getDescription());

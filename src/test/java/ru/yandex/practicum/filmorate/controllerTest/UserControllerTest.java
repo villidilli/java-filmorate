@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate.controllerTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,7 +64,7 @@ public class UserControllerTest {
         user1.setLogin("log in");
         response = controller.update(user1);
         actualUser = response.getBody();
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals(1, actualUser.getId());
         assertEquals(user1.getName(), actualUser.getName());
         assertEquals(user1.getEmail(), actualUser.getEmail());
