@@ -6,7 +6,6 @@ import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 
-
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
