@@ -19,6 +19,6 @@ public class User {
     @Email
     @NotBlank
     private String email;
-    @Past
+    @PastOrPresent
     private LocalDate birthday;
 }
