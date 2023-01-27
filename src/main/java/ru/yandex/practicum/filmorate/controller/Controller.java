@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.Requestable;
@@ -17,6 +18,7 @@ import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 @Slf4j
+@Validated
 public abstract class Controller<T extends Requestable> {
     protected final Map<Integer, T> objects = new HashMap<>();
     protected int generatorID = 1;
@@ -33,13 +35,11 @@ public abstract class Controller<T extends Requestable> {
         if (objects.get(id) == null) throw new ValidationException(NOT_FOUND);
     }
 
-    @GetMapping
     public List<Requestable> getAllObjects() {
         log.info(LOG_SIZE_FILMS.message, objects.size());
         return new ArrayList<>(objects.values());
     }
 
-    @PostMapping
     public ResponseEntity<Requestable> create(@Valid @RequestBody T obj) {
         try {
             validate(obj);
@@ -54,7 +54,6 @@ public abstract class Controller<T extends Requestable> {
         }
     }
 
-    @PutMapping
     public ResponseEntity<Requestable> update(@Valid @RequestBody T obj) {
         try {
             validate(obj);
