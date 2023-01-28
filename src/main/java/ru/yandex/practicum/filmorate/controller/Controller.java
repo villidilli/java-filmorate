@@ -4,11 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.web.bind.annotation.*;
-
 import ru.yandex.practicum.filmorate.model.Requestable;
 
-import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import java.util.*;
@@ -38,7 +35,7 @@ public abstract class Controller<T extends Requestable> {
         return new ArrayList<>(objects.values());
     }
 
-    public ResponseEntity<Requestable> create(@Valid @RequestBody T obj) {
+    public ResponseEntity<Requestable> create(T obj) {
         try {
             validate(obj);
             log.info(LOG_VALIDATION_SUCCESS.message);
@@ -52,7 +49,7 @@ public abstract class Controller<T extends Requestable> {
         }
     }
 
-    public ResponseEntity<Requestable> update(@Valid @RequestBody T obj) {
+    public ResponseEntity<Requestable> update(T obj) {
         try {
             validate(obj);
             isExist(obj);
