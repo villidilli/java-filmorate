@@ -19,7 +19,6 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 
 @RestController
-@Slf4j
 @Validated
 @RequestMapping("/users")
 public class UserController extends Controller<User> {

@@ -19,7 +19,6 @@ import java.util.List;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 @RestController
-@Slf4j
 @RequestMapping("/films")
 @Validated
 public class FilmController extends Controller<Film> {
