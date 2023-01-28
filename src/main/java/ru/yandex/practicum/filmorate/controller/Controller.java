@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.Requestable;
@@ -18,7 +17,6 @@ import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 @Slf4j
-@Validated
 public abstract class Controller<T extends Requestable> {
     protected final Map<Integer, T> objects = new HashMap<>();
     protected int generatorID = 1;

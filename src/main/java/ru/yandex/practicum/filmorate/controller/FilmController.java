@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,6 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 @RestController
 @RequestMapping("/films")
-@Validated
 public class FilmController extends Controller<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
 
