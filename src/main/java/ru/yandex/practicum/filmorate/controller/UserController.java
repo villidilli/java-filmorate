@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -11,6 +12,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import java.util.List;
+import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
@@ -40,5 +42,17 @@ public class UserController extends Controller<User> {
     @PutMapping
     public ResponseEntity<Requestable> update(@Valid @RequestBody User obj) {
         return super.update(obj);
+    }
+
+    @Override
+    @ExceptionHandler
+    protected ResponseEntity<Map<String, String>> exceptionHandler(ValidationException e) {
+        return super.exceptionHandler(e);
+    }
+
+    @Override
+    @ExceptionHandler
+    protected ResponseEntity<Map<String, String>> exceptionHandler(NotFoundException e) {
+        return super.exceptionHandler(e);
     }
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 
 import javax.validation.ValidationException;
@@ -11,6 +12,7 @@ import javax.validation.ValidationException;
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
+import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
 @Slf4j
@@ -24,10 +26,10 @@ public abstract class Controller<T extends Requestable> {
         log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
     }
 
-    private void isExist(T obj) throws ValidationException {
+    private void isExist(T obj) throws ValidationException, NotFoundException {
         Integer id = obj.getId();
         if (id == null) throw new ValidationException(ID_NOT_IS_BLANK);
-        if (objects.get(id) == null) throw new ValidationException(NOT_FOUND);
+        if (objects.get(id) == null) throw new NotFoundException(NOT_FOUND_BY_ID);
     }
 
     public List<Requestable> getAllObjects() {
@@ -36,30 +38,40 @@ public abstract class Controller<T extends Requestable> {
     }
 
     public ResponseEntity<Requestable> create(T obj) {
-        try {
+//        try {
             validate(obj);
             log.info(LOG_VALIDATION_SUCCESS.message);
             obj.setId(generatorID++);
             objects.put(obj.getId(), obj);
             log.info(LOG_SIZE_FILMS.message, objects.size());
             return ResponseEntity.ok(obj);
-        } catch (ValidationException e) {
-            logException(HttpStatus.BAD_REQUEST, e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(obj);
-        }
+//        } catch (ValidationException e) {
+//            logException(HttpStatus.BAD_REQUEST, e);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(obj);
+//        }
     }
 
     public ResponseEntity<Requestable> update(T obj) {
-        try {
+//        try {
             validate(obj);
             isExist(obj);
             log.info(LOG_VALIDATION_SUCCESS.message);
             objects.put(obj.getId(), obj);
             log.info(LOG_SIZE_FILMS.message, objects.size());
             return ResponseEntity.ok(obj);
-        } catch (ValidationException e) {
-            logException(HttpStatus.NOT_FOUND, e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(obj);
-        }
+//        } catch (ValidationException e) {
+//            logException(HttpStatus.NOT_FOUND, e);
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(obj);
+//        }
+    }
+
+    protected ResponseEntity<Map<String, String>> exceptionHandler(ValidationException e) {
+        log.warn("/handlerVALIDATION");
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+    }
+
+    protected ResponseEntity<Map<String, String>> exceptionHandler(NotFoundException e) {
+        log.warn("/handlerNOTFOUND");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
     }
 }
