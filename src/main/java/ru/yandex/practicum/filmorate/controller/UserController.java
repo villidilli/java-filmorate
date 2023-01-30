@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -22,7 +23,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 public class UserController extends Controller<User> {
     @Override
     protected void validate(User obj) throws ValidationException {
-        if (obj.getLogin().contains(" ")) throw new ValidationException(LOGIN_NOT_HAVE_SPACE);
+        if (obj.getLogin().contains(" ")) throw new ValidationException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
         if (obj.getName() == null) obj.setName(obj.getLogin());
     }
 
@@ -34,14 +35,14 @@ public class UserController extends Controller<User> {
 
     @Override
     @PostMapping
-    public ResponseEntity<Requestable> create(@Valid @RequestBody User obj) {
-        return super.create(obj);
+    public ResponseEntity<Requestable> create(@Valid @RequestBody User obj, BindingResult bindResult) {
+        return super.create(obj, bindResult);
     }
 
     @Override
     @PutMapping
-    public ResponseEntity<Requestable> update(@Valid @RequestBody User obj) {
-        return super.update(obj);
+    public ResponseEntity<Requestable> update(@Valid @RequestBody User obj, BindingResult bindResult) {
+        return super.update(obj, bindResult);
     }
 
     @Override

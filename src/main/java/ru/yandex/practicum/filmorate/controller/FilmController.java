@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -24,7 +25,8 @@ public class FilmController extends Controller<Film> {
 
     @Override
     protected void validate(Film obj) throws ValidationException {
-        if (obj.getReleaseDate().isBefore(BIRTHDAY_CINEMA)) throw new ValidationException(RELEASE_DATE_INVALID);
+        if (obj.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
+            throw new ValidationException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
     }
 
     @Override
@@ -35,14 +37,14 @@ public class FilmController extends Controller<Film> {
 
     @Override
     @PostMapping
-    public ResponseEntity<Requestable> create(@Valid @RequestBody Film obj) {
-        return super.create(obj);
+    public ResponseEntity<Requestable> create(@Valid @RequestBody Film obj, BindingResult bindResult) {
+        return super.create(obj, bindResult);
     }
 
     @Override
     @PutMapping
-    public ResponseEntity<Requestable> update(@Valid @RequestBody Film obj) {
-        return super.update(obj);
+    public ResponseEntity<Requestable> update(@Valid @RequestBody Film obj, BindingResult bindResult) {
+        return super.update(obj, bindResult);
     }
 
     @Override
