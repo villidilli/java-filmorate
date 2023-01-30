@@ -9,15 +9,15 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class User extends Requestable {
-    @Positive
+    @Positive(message = "ID должен быть положительным целым числом")
     @EqualsAndHashCode.Include
     private Integer id;
-    @NotBlank
+    @NotBlank(message = "Логин не может быть пустым")
     private String login;
     private String name;
-    @Email
-    @NotBlank
+    @Email(message = "Email несоответствует нормам синтаксиса")
+    @NotBlank(message = "Email не может быть null или пустым")
     private String email;
-    @PastOrPresent
+    @PastOrPresent(message = "Дата рождения не должна быть в будущем времени")
     private LocalDate birthday;
 }
