@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.UnexpectedException;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -17,7 +16,7 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
-import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
+import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 
 
 @RestController
@@ -25,8 +24,8 @@ import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 @RequestMapping("/users")
 public class UserController extends Controller<User> {
     @Override
-    protected void customValidate(User obj) throws ValidationException {
-        if (obj.getLogin().contains(" ")) throw new ValidationException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
+    protected void customValidate(User obj) throws ValidateException {
+        if (obj.getLogin().contains(" ")) throw new ValidateException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
         if (obj.getName() == null) obj.setName(obj.getLogin());
         log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
     }

@@ -6,6 +6,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 
 import javax.validation.ValidationException;
@@ -14,14 +15,14 @@ import java.util.*;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
-import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
+import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 
 @Slf4j
 public abstract class Controller<T extends Requestable> {
     protected final Map<Integer, T> objects = new HashMap<>();
     protected int generatorID = 1;
 
-    protected abstract void customValidate(T obj) throws ValidationException;
+    protected abstract void customValidate(T obj) throws ValidateException;
 
     private String collectBindResultMessage(BindingResult bindResult) {
         StringBuilder sb = new StringBuilder();
@@ -34,13 +35,13 @@ public abstract class Controller<T extends Requestable> {
     }
 
     private void annotationValidate(BindingResult bindResult) {
-        if (bindResult.hasErrors()) throw new ValidationException(collectBindResultMessage(bindResult));
+        if (bindResult.hasErrors()) throw new ValidateException(collectBindResultMessage(bindResult));
         log.debug(LOG_ANNOTATION_VALID_SUCCESS.message);
     }
 
-    private void isObjectExist(T obj) throws ValidationException, NotFoundException {
+    private void isObjectExist(T obj) throws ValidateException, NotFoundException {
         Integer id = obj.getId();
-        if (id == null) throw new ValidationException("[id] " + ID_NOT_IS_BLANK);
+        if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (objects.get(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message);
     }
@@ -49,7 +50,7 @@ public abstract class Controller<T extends Requestable> {
         return new ArrayList<>(objects.values());
     }
 
-    public Requestable create(T obj, BindingResult bindResult) throws ValidationException {
+    public Requestable create(T obj, BindingResult bindResult) throws ValidateException {
         customValidate(obj);
         annotationValidate(bindResult);
         obj.setId(generatorID++);
@@ -59,7 +60,7 @@ public abstract class Controller<T extends Requestable> {
         return obj;
     }
 
-    public Requestable update(T obj, BindingResult bindResult) throws ValidationException{
+    public Requestable update(T obj, BindingResult bindResult) throws ValidateException{
         annotationValidate(bindResult);
         customValidate(obj);
         isObjectExist(obj);

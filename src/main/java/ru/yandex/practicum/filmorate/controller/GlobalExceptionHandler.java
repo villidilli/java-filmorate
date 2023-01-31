@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.UnexpectedException;
 
-import javax.validation.ValidationException;
+import ru.yandex.practicum.filmorate.exception.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ExceptionResponse exceptionHandler(ValidationException e) {
+    protected ExceptionResponse exceptionHandler(ValidateException e) {
         log.debug("/handlerValidationException");
         logException(HttpStatus.BAD_REQUEST, e);
         return new ExceptionResponse(e);
