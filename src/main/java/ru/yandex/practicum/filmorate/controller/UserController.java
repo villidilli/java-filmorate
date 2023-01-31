@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ThrowableException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -60,6 +61,13 @@ public class UserController extends Controller<User> {
     @ExceptionHandler
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     protected ExceptionResponse exceptionHandler(NotFoundException e) {
+        return super.exceptionHandler(e);
+    }
+
+    @Override
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    protected ExceptionResponse exceptionHandler(ThrowableException e) {
         return super.exceptionHandler(e);
     }
 }
