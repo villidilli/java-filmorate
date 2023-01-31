@@ -11,11 +11,9 @@ import ru.yandex.practicum.filmorate.model.Requestable;
 
 import javax.validation.ValidationException;
 
-import java.time.Instant;
 import java.time.LocalTime;
 import java.util.*;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
@@ -72,7 +70,7 @@ public abstract class Controller<T extends Requestable> {
     }
 
     public List<Requestable> getAllObjects() {
-        log.info(LOG_SIZE_FILMS.message, objects.size());
+        log.info(LOG_SIZE_OBJECTS.message, objects.size());
         return new ArrayList<>(objects.values());
     }
 
@@ -82,7 +80,7 @@ public abstract class Controller<T extends Requestable> {
         log.info(LOG_VALIDATION_SUCCESS.message);
         obj.setId(generatorID++);
         objects.put(obj.getId(), obj);
-        log.info(LOG_SIZE_FILMS.message, objects.size());
+        log.info(LOG_SIZE_OBJECTS.message, objects.size());
         return ResponseEntity.ok(obj);
     }
 
@@ -92,7 +90,7 @@ public abstract class Controller<T extends Requestable> {
         isExist(obj);
         log.info(LOG_VALIDATION_SUCCESS.message);
         objects.put(obj.getId(), obj);
-        log.info(LOG_SIZE_FILMS.message, objects.size());
+        log.info(LOG_SIZE_OBJECTS.message, objects.size());
         return ResponseEntity.ok(obj);
     }
 }
