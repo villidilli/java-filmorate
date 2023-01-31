@@ -53,7 +53,7 @@ public class UserController extends Controller<User> {
 
     @Override
     @ExceptionHandler
-    protected ResponseEntity<Map<String, String>> exceptionHandler(NotFoundException e) {
+    protected ResponseEntity<ExceptionResponse> exceptionHandler(NotFoundException e) {
         return super.exceptionHandler(e);
     }
 }

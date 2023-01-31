@@ -63,10 +63,10 @@ public abstract class Controller<T extends Requestable> {
         return ResponseEntity.badRequest().body(collectResponseBody(e));
     }
 
-    protected ResponseEntity<Map<String, String>> exceptionHandler(NotFoundException e) {
+    protected ResponseEntity<ExceptionResponse> exceptionHandler(NotFoundException e) {
         log.debug("/handlerNotFoundException");
         logException(HttpStatus.NOT_FOUND, e);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(collectResponseBody(e));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e));
     }
 
     public List<Requestable> getAllObjects() {
