@@ -38,9 +38,9 @@ public abstract class Controller<T extends Requestable> {
         if (bindResult.hasErrors()) throw new ValidationException(collectBindResultMessage(bindResult));
     }
 
-    private void logException(HttpStatus status, Exception exception) {
-        log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
-    }
+//    private void logException(HttpStatus status, Exception exception) {
+//        log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
+//    }
 
     private void isObjectExist(T obj) throws ValidationException, NotFoundException {
         Integer id = obj.getId();
@@ -48,23 +48,23 @@ public abstract class Controller<T extends Requestable> {
         if (objects.get(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 
-    protected ExceptionResponse exceptionHandler(ValidationException e) {
-        log.debug("/handlerValidationException");
-        logException(HttpStatus.BAD_REQUEST, e);
-        return new ExceptionResponse(e);
-    }
+//    protected ExceptionResponse exceptionHandler(ValidationException e) {
+//        log.debug("/handlerValidationException");
+//        logException(HttpStatus.BAD_REQUEST, e);
+//        return new ExceptionResponse(e);
+//    }
 
-    protected ExceptionResponse exceptionHandler(NotFoundException e) {
-        log.debug("/handlerNotFoundException");
-        logException(HttpStatus.NOT_FOUND, e);
-        return new ExceptionResponse(e);
-    }
+//    protected ExceptionResponse exceptionHandler(NotFoundException e) {
+//        log.debug("/handlerNotFoundException");
+//        logException(HttpStatus.NOT_FOUND, e);
+//        return new ExceptionResponse(e);
+//    }
 
-    protected ExceptionResponse exceptionHandler(UnexpectedException e) {
-        log.debug("/handlerTrowableException");
-        logException(HttpStatus.INTERNAL_SERVER_ERROR, e);
-        return new ExceptionResponse(e);
-    }
+//    protected ExceptionResponse exceptionHandler(UnexpectedException e) {
+//        log.debug("/handlerTrowableException");
+//        logException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+//        return new ExceptionResponse(e);
+//    }
 
     public List<Requestable> getAllObjects() {
         log.info(LOG_SIZE_OBJECTS.message, objects.size());

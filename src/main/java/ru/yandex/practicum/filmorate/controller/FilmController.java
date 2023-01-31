@@ -49,25 +49,4 @@ public class FilmController extends Controller<Film> {
     public Requestable update(@Valid @RequestBody Film obj, BindingResult bindResult) {
         return super.update(obj, bindResult);
     }
-
-    @Override
-    @ExceptionHandler
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    protected ExceptionResponse exceptionHandler(ValidationException e) {
-        return super.exceptionHandler(e);
-    }
-
-    @Override
-    @ExceptionHandler
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    protected ExceptionResponse exceptionHandler(NotFoundException e) {
-        return super.exceptionHandler(e);
-    }
-
-    @Override
-    @ExceptionHandler
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ExceptionResponse exceptionHandler(UnexpectedException e) {
-        return super.exceptionHandler(e);
-    }
 }
