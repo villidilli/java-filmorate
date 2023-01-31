@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ThrowableException;
+import ru.yandex.practicum.filmorate.exception.UnexpectedException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 
 import javax.validation.ValidationException;
@@ -60,7 +60,7 @@ public abstract class Controller<T extends Requestable> {
         return new ExceptionResponse(e);
     }
 
-    protected ExceptionResponse exceptionHandler(ThrowableException e) {
+    protected ExceptionResponse exceptionHandler(UnexpectedException e) {
         log.debug("/handlerTrowableException");
         logException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         return new ExceptionResponse(e);

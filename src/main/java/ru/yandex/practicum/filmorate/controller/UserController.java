@@ -1,13 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ThrowableException;
+import ru.yandex.practicum.filmorate.exception.UnexpectedException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -15,7 +14,6 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import java.util.List;
-import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationException.*;
 
@@ -67,7 +65,7 @@ public class UserController extends Controller<User> {
     @Override
     @ExceptionHandler
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ExceptionResponse exceptionHandler(ThrowableException e) {
+    protected ExceptionResponse exceptionHandler(UnexpectedException e) {
         return super.exceptionHandler(e);
     }
 }
