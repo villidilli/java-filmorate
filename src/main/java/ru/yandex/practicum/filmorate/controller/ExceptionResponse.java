@@ -10,8 +10,8 @@ import java.time.LocalTime;
 @Setter
 public class ExceptionResponse {
 	protected String exceptionClass;
-	protected LocalTime timestamp;
 	protected String exceptionMessage;
+	protected LocalTime timestamp;
 
 	public ExceptionResponse(Exception exception) {
 		exceptionClass = exception.getClass().getSimpleName();

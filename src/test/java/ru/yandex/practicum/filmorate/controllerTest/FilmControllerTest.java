@@ -36,7 +36,7 @@ public class FilmControllerTest {
     @Test
     public void shouldReturnStatus400AndBodyWhenReleaseDateBeforeCreateMethod() {
         film1.setReleaseDate(LocalDate.of(1500, 1, 1));
-        response = filmController.create(film1);
+        response = filmController.create(film1, BindingResult.);
         actualFilm = (Film) response.getBody();
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNull(actualFilm.getId());

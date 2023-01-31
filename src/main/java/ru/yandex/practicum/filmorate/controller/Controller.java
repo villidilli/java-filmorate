@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Requestable;
 
 import javax.validation.ValidationException;
 
-import java.time.LocalTime;
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
@@ -23,7 +21,7 @@ public abstract class Controller<T extends Requestable> {
     protected final Map<Integer, T> objects = new HashMap<>();
     protected int generatorID = 1;
 
-    protected abstract void validate(T obj) throws ValidationException;
+    protected abstract void customValidate(T obj) throws ValidationException;
 
     private String collectBindResultMessage(BindingResult bindResult) {
         StringBuilder sb = new StringBuilder();
@@ -35,15 +33,7 @@ public abstract class Controller<T extends Requestable> {
         return sb.toString();
     }
 
-    private Map<String, String> collectResponseBody(Exception e) {
-        return Map.of(
-                "exception", e.getClass().getSimpleName(),
-                "message", e.getMessage(),
-                "time", LocalTime.now().toString()
-        );
-    }
-
-    private void validateBindResult(BindingResult bindResult) {
+    private void annotationValidate(BindingResult bindResult) {
         if (bindResult.hasErrors()) throw new ValidationException(collectBindResultMessage(bindResult));
     }
 
@@ -51,22 +41,22 @@ public abstract class Controller<T extends Requestable> {
         log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
     }
 
-    private void isExist(T obj) throws ValidationException, NotFoundException {
+    private void isObjectExist(T obj) throws ValidationException, NotFoundException {
         Integer id = obj.getId();
         if (id == null) throw new ValidationException("[id] " + ID_NOT_IS_BLANK);
         if (objects.get(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 
-    protected ResponseEntity<Map<String, String>> exceptionHandler(ValidationException e) {
+    protected ExceptionResponse exceptionHandler(ValidationException e) {
         log.debug("/handlerValidationException");
         logException(HttpStatus.BAD_REQUEST, e);
-        return ResponseEntity.badRequest().body(collectResponseBody(e));
+        return new ExceptionResponse(e);
     }
 
-    protected ResponseEntity<ExceptionResponse> exceptionHandler(NotFoundException e) {
+    protected ExceptionResponse exceptionHandler(NotFoundException e) {
         log.debug("/handlerNotFoundException");
         logException(HttpStatus.NOT_FOUND, e);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(e));
+        return new ExceptionResponse(e);
     }
 
     public List<Requestable> getAllObjects() {
@@ -74,23 +64,23 @@ public abstract class Controller<T extends Requestable> {
         return new ArrayList<>(objects.values());
     }
 
-    public ResponseEntity<Requestable> create(T obj, BindingResult bindResult) throws ValidationException {
-        validateBindResult(bindResult);
-        validate(obj);
+    public Requestable create(T obj, BindingResult bindResult) throws ValidationException {
+        customValidate(obj);
+        annotationValidate(bindResult);
         log.info(LOG_VALIDATION_SUCCESS.message);
         obj.setId(generatorID++);
         objects.put(obj.getId(), obj);
         log.info(LOG_SIZE_OBJECTS.message, objects.size());
-        return ResponseEntity.ok(obj);
+        return obj;
     }
 
-    public ResponseEntity<Requestable> update(T obj, BindingResult bindResult) throws ValidationException{
-        validateBindResult(bindResult);
-        validate(obj);
-        isExist(obj);
+    public Requestable update(T obj, BindingResult bindResult) throws ValidationException{
+        annotationValidate(bindResult);
+        customValidate(obj);
+        isObjectExist(obj);
         log.info(LOG_VALIDATION_SUCCESS.message);
         objects.put(obj.getId(), obj);
         log.info(LOG_SIZE_OBJECTS.message, objects.size());
-        return ResponseEntity.ok(obj);
+        return obj;
     }
 }
