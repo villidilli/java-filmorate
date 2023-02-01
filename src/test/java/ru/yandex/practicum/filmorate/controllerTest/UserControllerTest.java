@@ -3,54 +3,63 @@ package ru.yandex.practicum.filmorate.controllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import ru.yandex.practicum.filmorate.controller.ExceptionResponse;
 import ru.yandex.practicum.filmorate.controller.UserController;
 
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllerTest {
-//    UserController userController;
-//    private ResponseEntity<Requestable> response;
-//    private User user1;
-//    private User actualUser;
-//
-//    @BeforeEach
-//    public void beforeEach() {
-//        userController = new UserController();
-//        user1 = new User();
-//        user1.setName("Ваня");
-//        user1.setLogin("vanya");
-//        user1.setEmail("vanya@mail.ru");
-//        user1.setBirthday(LocalDate.of(1990, 6, 15));
-//    }
+	@Autowired
+	TestRestTemplate restTemplate;
+	@Autowired
+	UserController userController;
+	User user;
+	String url = "/users";
+	User actualUser;
+	ResponseEntity<User> entityUser;
+	ResponseEntity<ExceptionResponse> entityExceptionResponse;
+	ExceptionResponse exceptionResponse;
+
+//	@BeforeEach
+//	public void beforeEach() {
+//		userController.getObjects().clear();
+//		user = new User();
+//		user.setLogin("Vasssssssya");
+//		user.setEmail("vasya@ya.ru");
+//		user.setName("Vasya");
+//		user.setBirthday(LocalDate.of(1995, 1, 1));
+//	}
 //
 //    @Test
 //    public void shouldReturnStatus400AndBodyWhenLoginHaveSpaceCreateMethod() {
-//        user1.setLogin("log in");
-//        response = userController.create(user1);
-//        actualUser = (User) response.getBody();
-//        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-//        assertNull(actualUser.getId());
-//        assertEquals(user1.getName(), actualUser.getName());
-//        assertEquals(user1.getEmail(), actualUser.getEmail());
-//        assertEquals(user1.getBirthday(), actualUser.getBirthday());
-//        assertEquals(user1.getLogin(), actualUser.getLogin());
+//		user.setLogin("invalid login");
+//		entityExceptionResponse = restTemplate.postForEntity(url, user, ExceptionResponse.class);
+//		exceptionResponse = entityExceptionResponse.getBody();
+//		assertTrue(entityExceptionResponse.hasBody());
+//		assertEquals(400, entityExceptionResponse.getStatusCodeValue());
+//		assertEquals(ValidateException.class.getSimpleName(), exceptionResponse.getExceptionClass());
+//		assertTrue(exceptionResponse.getExceptionMessage().contains("Login"));
 //    }
 //
 //    @Test
 //    public void shouldReturnStatus200AndNameEqualsLoginWhenNameIsBlankCreateMethod() {
-//        user1.setName(null);
+//        user.setName(null);
 //        response = userController.create(user1);
-//        actualUser = (User) response.getBody();
+//        actualUser = restTemplate
 //        assertEquals(HttpStatus.OK, response.getStatusCode());
 //        assertEquals(user1.getLogin(), actualUser.getName());
 //        assertEquals(1, actualUser.getId());

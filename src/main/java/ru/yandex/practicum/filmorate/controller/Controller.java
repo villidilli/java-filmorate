@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 
 @Slf4j
 public abstract class Controller<T extends Requestable> {
+    @Getter
     protected final Map<Integer, T> objects = new HashMap<>();
     protected int generatorID = 1;
 
