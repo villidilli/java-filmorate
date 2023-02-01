@@ -22,6 +22,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 public abstract class Controller<T extends Requestable> {
     @Getter
     protected final Map<Integer, T> objects = new HashMap<>();
+    @Getter
     protected int generatorID = 1;
 
     protected abstract void customValidate(T obj) throws ValidateException;
