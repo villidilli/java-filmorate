@@ -1,23 +1,24 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 
 import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
+
 import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 
 import java.util.List;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
-
 
 @RestController
 @Slf4j

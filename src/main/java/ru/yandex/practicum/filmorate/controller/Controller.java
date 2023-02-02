@@ -10,12 +10,11 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Requestable;
 
-import javax.validation.ValidationException;
-
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.controller.Message.*;
-import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
+
+import static ru.yandex.practicum.filmorate.exception.NotFoundException.*;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 
 @Slf4j
