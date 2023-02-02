@@ -4,25 +4,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+
+import org.springframework.http.*;
 
 import ru.yandex.practicum.filmorate.controller.ExceptionResponse;
-import ru.yandex.practicum.filmorate.controller.UserController;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
-import ru.yandex.practicum.filmorate.model.Requestable;
+
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.net.URI;
+
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllerTest {
@@ -45,49 +43,47 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void shouldReturnStatus200AndNameEqualsLoginWhenNameIsBlankCreateMethod() {
-		user.setName(null);
-		entityUser = restTemplate.postForEntity(url,user, User.class);
-		assertEquals(HttpStatus.OK, entityUser.getStatusCode());
-		actualUser = entityUser.getBody();
-		assertEquals(user.getLogin(), actualUser.getName());
-		System.out.println(actualUser.getId());
-
-	}
-    @Test
-    public void shouldReturnStatus400AndBodyWhenLoginHaveSpaceCreateMethod() {
+	public void shouldReturnStatus400IfLoginWithSpaceWhenPOST() {
 		user.setLogin("invalid login");
 		entityExceptionResponse = restTemplate.postForEntity(url, user, ExceptionResponse.class);
+		assertEquals(HttpStatus.BAD_REQUEST, entityExceptionResponse.getStatusCode());
 		exceptionResponse = entityExceptionResponse.getBody();
-		assertTrue(entityExceptionResponse.hasBody());
-		assertEquals(400, entityExceptionResponse.getStatusCodeValue());
 		assertEquals(ValidateException.class.getSimpleName(), exceptionResponse.getExceptionClass());
 		assertTrue(exceptionResponse.getExceptionMessage().contains("Login"));
-    }
+	}
 
+	@Test
+	public void shouldReturnStatus200AndNameEqualsLoginWhenPOST() {
+		user.setName(null);
+		entityUser = restTemplate.postForEntity(url, user, User.class);
+		assertEquals(HttpStatus.OK, entityUser.getStatusCode());
+		actualUser = entityUser.getBody();
+		assertEquals(actualUser.getName(), actualUser.getLogin());
+	}
 
+	@Test
+	public void shouldReturnStatus400IfLoginWithSpaceWhenPUT() {
+		user.setLogin("invalid login");
+		entityExceptionResponse = restTemplate.exchange(
+								new RequestEntity<>(user, HttpMethod.PUT, URI.create(url)), ExceptionResponse.class);
+		assertEquals(HttpStatus.BAD_REQUEST, entityExceptionResponse.getStatusCode());
+		exceptionResponse = entityExceptionResponse.getBody();
+		assertEquals(ValidateException.class.getSimpleName(), exceptionResponse.getExceptionClass());
+		assertTrue(exceptionResponse.getExceptionMessage().contains("Login"));
+	}
 
-    @Test
-    public void shouldReturnStatus400WhenLoginHaveSpaceUpdateMethod() {
-        int idToSet = restTemplate.postForEntity(url, user, User.class).getBody().getId();
-		System.out.println(idToSet);
-		System.out.println(userController.getObjects());
-		System.out.println(userController.getGeneratorID());
-    }
-//
-//    @Test
-//    public void shouldReturnStatus200AndNameEqualsLoginWhenNameIsBlankUpdateMethod() {
-//        userController.create(user1);
-//        user1.setId(1);
-//        user1.setName(null);
-//        response = userController.update(user1);
-//        actualUser = (User) response.getBody();
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertEquals(user1.getLogin(), actualUser.getName());
-//        assertEquals(1, actualUser.getId());
-//        assertEquals(user1.getName(), actualUser.getName());
-//        assertEquals(user1.getEmail(), actualUser.getEmail());
-//        assertEquals(user1.getBirthday(), actualUser.getBirthday());
-//        assertEquals(user1.getLogin(), actualUser.getLogin());
-//    }
+	@Test
+	public void shouldReturnStatus200AndNameEqualsLoginWhenPUT() {
+		entityUser = restTemplate.postForEntity(url, user, User.class);
+		assertEquals(HttpStatus.OK, entityUser.getStatusCode());
+		int id = entityUser.getBody().getId();
+		user.setId(id);
+		user.setName(null);
+		entityUser = restTemplate.exchange(
+				new RequestEntity<>(user, HttpMethod.PUT, URI.create(url)), User.class);
+		assertEquals(HttpStatus.OK, entityUser.getStatusCode());
+		actualUser = entityUser.getBody();
+		assertEquals(id, actualUser.getId());
+		assertEquals(actualUser.getName(), actualUser.getLogin());
+	}
 }
