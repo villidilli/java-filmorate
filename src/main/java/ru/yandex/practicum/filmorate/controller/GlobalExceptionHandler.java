@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import ru.yandex.practicum.filmorate.exception.*;
 
-@RestControllerAdvice
+@RestControllerAdvice("ru.yandex.practicum.controller")
 @Slf4j
 public class GlobalExceptionHandler {
     private void logException(HttpStatus status, Exception exception) {
