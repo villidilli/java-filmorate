@@ -67,12 +67,12 @@ public class FilmController extends Controller<Film> {
     }
 
     @Override
-    protected Film addInStorage(Film obj) {
-        return storage.add(obj);
+    protected void addInStorage(Film obj) {
+        storage.add(obj);
     }
 
     @Override
-    protected Film updateInStorage(Film obj) {
-        return storage.update(obj);
+    protected void updateInStorage(Film obj) {
+        storage.update(obj);
     }
 }

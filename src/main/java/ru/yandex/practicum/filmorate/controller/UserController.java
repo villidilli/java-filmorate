@@ -64,12 +64,12 @@ public class UserController extends Controller<User> {
     }
 
     @Override
-    protected User addInStorage(User obj) {
-        return storage.add(obj);
+    protected void addInStorage(User obj) {
+        storage.add(obj);
     }
 
     @Override
-    protected User updateInStorage(User obj) {
-        return storage.update(obj);
+    protected void updateInStorage(User obj) {
+        storage.update(obj);
     }
 }

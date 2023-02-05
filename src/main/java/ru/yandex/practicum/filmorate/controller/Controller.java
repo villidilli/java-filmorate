@@ -15,8 +15,8 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Slf4j
 public abstract class Controller<T extends Requestable> {
     protected abstract void customValidate(T obj) throws ValidateException;
-    protected abstract T addInStorage(T obj);
-    protected abstract T updateInStorage(T obj);
+    protected abstract void addInStorage(T obj);
+    protected abstract void updateInStorage(T obj);
 
     private String collectBindResultMessage(BindingResult bindResult) {
         StringBuilder sb = new StringBuilder();
