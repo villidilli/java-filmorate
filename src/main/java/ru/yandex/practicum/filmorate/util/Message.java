@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.util;
 
 public enum Message {
 	LOG_WRITE_OBJECT("Записан объект: [{}]"),
@@ -8,7 +8,7 @@ public enum Message {
 	LOG_IS_EXIST_SUCCESS("Запрашиваемый объект найден"),
 	LOG_SIZE_OBJECTS("Количество объектов: [{}]");
 
-	final String message;
+	public final String message;
 
 	Message(String message) {
 		this.message = message;

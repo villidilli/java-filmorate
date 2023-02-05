@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 
-import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -20,7 +19,7 @@ import javax.validation.Valid;
 
 import java.util.List;
 
-import static ru.yandex.practicum.filmorate.controller.Message.*;
+import static ru.yandex.practicum.filmorate.util.Message.*;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 
 @RestController
@@ -37,6 +36,27 @@ public class UserController extends Controller<User> {
     }
 
     @Override
+    @GetMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<User> getAll() {
+        return storage.getAll();
+    }
+
+    @Override
+    @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public User create(@Valid @RequestBody User user, BindingResult bindResult) {
+        return super.create(user, bindResult);
+    }
+
+    @Override
+    @PutMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    public User update(@Valid @RequestBody User user, BindingResult bindResult) {
+        return super.update(user, bindResult);
+    }
+
+    @Override
     protected void customValidate(User obj) throws ValidateException {
         if (obj.getLogin().contains(" ")) throw new ValidateException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
         if (obj.getName() == null) obj.setName(obj.getLogin());
@@ -44,23 +64,12 @@ public class UserController extends Controller<User> {
     }
 
     @Override
-    @GetMapping
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<Requestable> getAllObjects() {
-        return super.getAllObjects();
+    protected User addInStorage(User obj) {
+        return storage.add(obj);
     }
 
     @Override
-    @PostMapping
-    @ResponseStatus(value = HttpStatus.OK)
-    public Requestable create(@Valid @RequestBody User obj, BindingResult bindResult) {
-        return super.create(obj, bindResult);
-    }
-
-    @Override
-    @PutMapping
-    @ResponseStatus(value = HttpStatus.OK)
-    public Requestable update(@Valid @RequestBody User obj, BindingResult bindResult) {
-        return super.update(obj, bindResult);
+    protected User updateInStorage(User obj) {
+        return storage.update(obj);
     }
 }

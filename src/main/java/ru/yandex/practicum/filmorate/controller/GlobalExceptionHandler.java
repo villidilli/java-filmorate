@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import ru.yandex.practicum.filmorate.exception.*;
 
-@RestControllerAdvice("ru.yandex.practicum.controller")
+@RestControllerAdvice("ru.yandex.practicum")
 @Slf4j
 public class GlobalExceptionHandler {
     private void logException(HttpStatus status, Exception exception) {
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ExceptionResponse exceptionHandler(UnexpectedException e) {
+    protected ExceptionResponse exceptionHandler(Exception e) {
         log.debug("/handlerUnexpectedException");
         logException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         return new ExceptionResponse(e);
