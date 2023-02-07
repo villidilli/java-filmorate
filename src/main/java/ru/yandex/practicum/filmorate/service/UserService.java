@@ -13,6 +13,8 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
@@ -64,11 +66,9 @@ public class UserService {
 
     public List<User> getFriendsById(Integer id) {
         isExist(id);
-        List<User> list = new ArrayList<>();
-        User user = storage.getById(id);
-        user.getFriends().stream()
-                .forEach(friendId -> list.add(storage.getById(friendId)));
-        return list;
+        return storage.getAll().stream()
+                .filter(user -> user.getFriends().contains(id))
+                .collect(Collectors.toList());
     }
 
     private void annotationValidate(BindingResult bindResult) throws ValidateException {
