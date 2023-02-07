@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -64,5 +65,9 @@ public class UserController implements Controller<User> {
         service.deleteFriend(id, friendId);
     }
 
-//    @GetMapping("/{id}/friends")
+    @GetMapping("/{id}/friends")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<User> getFriendsById(@PathVariable @Positive Integer id) {
+        return service.getFriendsById(id);
+    }
 }
