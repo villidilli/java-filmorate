@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 import java.util.List;
 
@@ -42,9 +43,26 @@ public class UserController implements Controller<User> {
         return service.create(user, bindResult);
     }
 
+    @Override
     @PutMapping
     @ResponseStatus(value = HttpStatus.OK)
     public User update(@Valid @RequestBody User user, BindingResult bindResult) {
         return service.update(user, bindResult);
     }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void addFriend(@PathVariable @Positive Integer id,
+                          @PathVariable @Positive Integer friendId) {
+        service.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteFriend(@PathVariable @Positive Integer id,
+                             @PathVariable @Positive Integer friendId) {
+        service.deleteFriend(id, friendId);
+    }
+
+//    @GetMapping("/{id}/friends")
 }

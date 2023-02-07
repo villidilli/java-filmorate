@@ -11,6 +11,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class User extends Requestable {
+    private Set<Integer> friends = new HashSet<>();
     @Positive(message = "ID должен быть положительным целым числом")
     @EqualsAndHashCode.Include
     private Integer id;

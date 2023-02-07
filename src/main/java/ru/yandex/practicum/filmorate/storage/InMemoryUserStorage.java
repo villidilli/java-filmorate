@@ -37,16 +37,13 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User update(User user) {
-        isExist(user);
         users.put(user.getId(), user);
         log.debug(LOG_WRITE_OBJECT.message, user.getClass().getSimpleName());
         return null;
     }
 
-    private void isExist(User user) {
-        Integer id = user.getId();
-        if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        if (users.get(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
-        log.debug(LOG_IS_EXIST_SUCCESS.message);
+    @Override
+    public User getById(Integer id) {
+        return users.get(id);
     }
 }

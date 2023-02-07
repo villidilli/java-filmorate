@@ -12,4 +12,6 @@ public interface UserStorage {
     User add(User user);
 
     User update(User user);
+
+    User getById(Integer id);
 }
