@@ -27,52 +27,32 @@ import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 @RestController
 @Slf4j
 @RequestMapping("/films")
-public class FilmController extends Controller<Film> {
-    public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
-    protected final FilmService service;
-    protected final FilmStorage storage;
+public class FilmController implements Controller<Film> {
+    private final FilmService service;
 
     @Autowired
-    public FilmController(FilmService service, FilmStorage storage) {
+    public FilmController(FilmService service) {
         this.service = service;
-        this.storage = storage;
     }
 
     @Override
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getAll() {
-        return storage.getAll();
+        return service.getAll();
     }
 
     @Override
     @PostMapping
     @ResponseStatus(value = HttpStatus.OK)
-    public Film create(@Valid @RequestBody Film obj, BindingResult bindResult) {
-        return super.create(obj, bindResult);
+    public Film create(@Valid @RequestBody Film film, BindingResult bindResult) {
+        return service.create(film, bindResult);
     }
 
     @Override
     @PutMapping
     @ResponseStatus(value = HttpStatus.OK)
-    public Film update(@Valid @RequestBody Film obj, BindingResult bindResult) {
-        return super.update(obj, bindResult);
-    }
-
-    @Override
-    protected void customValidate(Film obj) throws ValidateException {
-        if (obj.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
-            throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
-        log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
-    }
-
-    @Override
-    protected void addInStorage(Film obj) {
-        storage.add(obj);
-    }
-
-    @Override
-    protected void updateInStorage(Film obj) {
-        storage.update(obj);
+    public Film update(@Valid @RequestBody Film film, BindingResult bindResult) {
+        return service.update(film, bindResult);
     }
 }
