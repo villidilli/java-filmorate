@@ -55,4 +55,6 @@ public class FilmController implements Controller<Film> {
     public Film update(@Valid @RequestBody Film film, BindingResult bindResult) {
         return service.update(film, bindResult);
     }
+
+
 }
