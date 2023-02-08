@@ -12,7 +12,10 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -71,6 +74,15 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public List<User> getCommonFriends(Integer id, Integer otherId) {
+        isExist(id);
+        isExist(otherId);
+        Set<Integer> idFriends = storage.getById(id).getFriends();
+        Set<Integer> otherIdFriends = storage.getById(otherId).getFriends();
+        idFriends.retainAll(otherIdFriends);
+        return idFriends.stream().map(storage::getById).collect(Collectors.toList());
+    }
+
     private void annotationValidate(BindingResult bindResult) throws ValidateException {
         if (bindResult.hasErrors()) throw new ValidateException(collectBindResultMessage(bindResult));
         log.debug(LOG_ANNOTATION_VALID_SUCCESS.message);
@@ -97,4 +109,6 @@ public class UserService {
         if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message);
     }
+
+
 }

@@ -70,4 +70,11 @@ public class UserController implements Controller<User> {
     public List<User> getFriendsById(@PathVariable @Positive Integer id) {
         return service.getFriendsById(id);
     }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<User> getCommonFriends(@PathVariable @Positive Integer id,
+                                       @PathVariable @Positive Integer otherId) {
+        return service.getCommonFriends(id, otherId);
+    }
 }
