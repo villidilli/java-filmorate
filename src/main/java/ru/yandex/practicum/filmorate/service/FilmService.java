@@ -5,44 +5,56 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
+import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.RELEASE_DATE_INVALID;
-import static ru.yandex.practicum.filmorate.util.Message.LOG_ANNOTATION_VALID_SUCCESS;
-import static ru.yandex.practicum.filmorate.util.Message.LOG_CUSTOM_VALID_SUCCESS;
+import static ru.yandex.practicum.filmorate.util.Message.*;
 
 @Service
 @Slf4j
 public class FilmService {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
-    private final FilmStorage storage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage storage) {
-        this.storage = storage;
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     public List<Film> getAll() {
-        return storage.getAll();
+        return filmStorage.getAll();
     }
 
     public Film create(Film film, BindingResult bindResult) {
         customValidate(film);
         annotationValidate(bindResult);
-        storage.add(film);
+        filmStorage.add(film);
         return film;
     }
 
     public Film update(Film film, BindingResult bindResult) {
         annotationValidate(bindResult);
         customValidate(film);
-        storage.update(film);
+        isExist(film.getId());
+        filmStorage.update(film);
         return film;
+    }
+
+    public void addLike(Integer id, Integer userId) {
+        isExist(id);
+        isExist(userId);
+        userStorage.getById(userId);
     }
 
     private void annotationValidate(BindingResult bindResult) throws ValidateException{
@@ -66,5 +78,10 @@ public class FilmService {
         log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
     }
 
+    private void isExist(Integer id) throws ValidateException, NotFoundException {
+        if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
+        if (filmStorage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
+        log.debug(LOG_IS_EXIST_SUCCESS.message);
+    }
 
 }

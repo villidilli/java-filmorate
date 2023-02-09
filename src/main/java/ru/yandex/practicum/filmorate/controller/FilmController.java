@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 import java.time.LocalDate;
 
@@ -56,5 +57,11 @@ public class FilmController implements Controller<Film> {
         return service.update(film, bindResult);
     }
 
+    @PutMapping("/{id}/like/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void addLike(@PathVariable @Positive Integer id,
+                        @PathVariable @Positive Integer userId) {
+        service.addLike(id, userId);
+    }
 
 }

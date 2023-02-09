@@ -43,6 +43,11 @@ public class InMemoryFilmStorage implements FilmStorage{
         return film;
     }
 
+    @Override
+    public Film getById(Integer id) {
+        return films.get(id);
+    }
+
     private void isExist(Film film) {
         Integer id = film.getId();
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
