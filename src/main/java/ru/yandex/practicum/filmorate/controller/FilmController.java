@@ -9,59 +9,51 @@ import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.*;
 
-import ru.yandex.practicum.filmorate.exception.ValidateException;
-
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
-import java.time.LocalDate;
-
 import java.util.List;
-
-import static ru.yandex.practicum.filmorate.util.Message.*;
-import static ru.yandex.practicum.filmorate.exception.ValidateException.*;
 
 @RestController
 @Slf4j
 @RequestMapping("/films")
 public class FilmController implements Controller<Film> {
-    private final FilmService service;
+    private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmService service) {
-        this.service = service;
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @Override
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getAll() {
-        return service.getAll();
+        return filmService.getAll();
     }
 
     @Override
     @PostMapping
     @ResponseStatus(value = HttpStatus.OK)
     public Film create(@Valid @RequestBody Film film, BindingResult bindResult) {
-        return service.create(film, bindResult);
+        return filmService.create(film, bindResult);
     }
 
     @Override
     @PutMapping
     @ResponseStatus(value = HttpStatus.OK)
     public Film update(@Valid @RequestBody Film film, BindingResult bindResult) {
-        return service.update(film, bindResult);
+        return filmService.update(film, bindResult);
     }
 
     @PutMapping("/{id}/like/{userId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable @Positive Integer id,
                         @PathVariable @Positive Integer userId) {
-        service.addLike(id, userId);
+        filmService.addLike(id, userId);
     }
 
 }

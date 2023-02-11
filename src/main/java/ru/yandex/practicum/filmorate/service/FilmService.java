@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,12 +23,12 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 public class FilmService {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userService = userService;
     }
 
     public List<Film> getAll() {
@@ -51,10 +50,10 @@ public class FilmService {
         return film;
     }
 
-    public void addLike(Integer id, Integer userId) {
-        isExist(id);
-        isExist(userId);
-        userStorage.getById(userId);
+    public void addLike(Integer filmId, Integer userId) {
+        isExist(filmId);
+        userService.isExist(userId);
+        filmStorage.getById(filmId).getUserLikes().add(userId);
     }
 
     private void annotationValidate(BindingResult bindResult) throws ValidateException{
@@ -83,5 +82,4 @@ public class FilmService {
         if (filmStorage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message);
     }
-
 }

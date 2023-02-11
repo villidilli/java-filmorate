@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class Film extends Requestable {
-    private Set<Integer> likes = new HashSet<>();
+    private Set<Integer> userLikes = new HashSet<>();
     @Positive(message = "ID должен быть положительным целым числом")
     @EqualsAndHashCode.Include
     private Integer id;
