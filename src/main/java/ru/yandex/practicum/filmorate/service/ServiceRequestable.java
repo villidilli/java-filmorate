@@ -51,15 +51,15 @@ public abstract class ServiceRequestable<T extends Requestable> {
 
     protected abstract void customValidate(T t);
 
+    private void annotationValidate(BindingResult bindResult) throws ValidateException {
+        if (bindResult.hasErrors()) throw new ValidateException(collectBindResultMessage(bindResult));
+        log.debug(LOG_ANNOTATION_VALID_SUCCESS.message);
+    }
+
     protected void isExist(Integer id) throws ValidateException, NotFoundException {
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message, id);
-    }
-
-    private void annotationValidate(BindingResult bindResult) throws ValidateException {
-        if (bindResult.hasErrors()) throw new ValidateException(collectBindResultMessage(bindResult));
-        log.debug(LOG_ANNOTATION_VALID_SUCCESS.message);
     }
 
     private String collectBindResultMessage(BindingResult bindResult) {

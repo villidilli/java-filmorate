@@ -35,6 +35,18 @@ public class FilmController implements ControllerRequestable<Film> {
         return filmService.getAll();
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Film getById(@PathVariable("id") Integer filmId) {
+        return filmService.getById(filmId);
+    }
+
+    @GetMapping("/popular")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<Film> getPopularFilms(@RequestParam(value = "count", required = false) Integer countFilms) {
+        return filmService.getPopularFilms(countFilms);
+    }
+
     @Override
     @PostMapping
     @ResponseStatus(value = HttpStatus.OK)
@@ -63,17 +75,5 @@ public class FilmController implements ControllerRequestable<Film> {
     public void deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable Integer userId) {
         filmService.deleteLike(filmId, userId);
-    }
-
-    @GetMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public Film getById(@PathVariable("id") Integer filmId) {
-        return filmService.getById(filmId);
-    }
-
-    @GetMapping("/popular")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<Film> getPopularFilms(@RequestParam(value = "count", required = false) Integer countFilms) {
-        return filmService.getPopularFilms(countFilms);
     }
 }

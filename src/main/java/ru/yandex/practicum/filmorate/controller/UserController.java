@@ -35,6 +35,25 @@ public class UserController implements ControllerRequestable<User> {
         return service.getAll();
     }
 
+    @GetMapping("/{id}/friends")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<User> getFriendsById(@PathVariable Integer id) {
+        return service.getFriendsById(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<User> getCommonFriends(@PathVariable Integer id,
+                                       @PathVariable Integer otherId) {
+        return service.getCommonFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public User getById(@PathVariable Integer id) {
+        return service.getById(id);
+    }
+
     @Override
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -65,24 +84,5 @@ public class UserController implements ControllerRequestable<User> {
                              @PathVariable Integer friendId) {
         log.debug("/deleteFriend");
         service.deleteFriend(id, friendId);
-    }
-
-    @GetMapping("/{id}/friends")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<User> getFriendsById(@PathVariable Integer id) {
-        return service.getFriendsById(id);
-    }
-
-    @GetMapping("/{id}/friends/common/{otherId}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<User> getCommonFriends(@PathVariable Integer id,
-                                       @PathVariable Integer otherId) {
-        return service.getCommonFriends(id, otherId);
-    }
-
-    @GetMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public User getById(@PathVariable Integer id) {
-        return service.getById(id);
     }
 }
