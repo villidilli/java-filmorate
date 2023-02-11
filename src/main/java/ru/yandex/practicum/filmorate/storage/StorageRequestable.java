@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface StorageRequestable<T extends Requestable> {
     List<T> getAll();
+
     T add(T t);
 
     T update(T t);

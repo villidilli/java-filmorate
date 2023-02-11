@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Requestable;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 
 import java.time.LocalDate;
@@ -36,23 +34,34 @@ public class FilmService extends ServiceRequestable<Film> {
     }
 
     public void addLike(Integer filmId, Integer userId) {
+        log.debug("/addLike");
         isExist(filmId);
         userService.isExist(userId);
         storage.getById(filmId).getUserLikes().add(userId);
+        log.debug(LOG_ADD_LIKE.message, userId, filmId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
+        log.debug("/deleteLike");
         isExist(filmId);
         userService.isExist(userId);
         storage.getById(filmId).getUserLikes().remove(userId);
+        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
-        Stream<Film> sortedFilms = storage.getAll().stream().sorted((o1, o2) -> o2.getUserLikes().size() - o1.getUserLikes().size());
+        log.debug("/getPopularFilm");
+        List<Film> result;
+        Stream<Film> sortedFilms = storage.getAll().stream()
+                .sorted((o1, o2) -> o2.getUserLikes().size() - o1.getUserLikes().size());
         if (countFilms == null) {
-            return sortedFilms.limit(DEFAULT_NUM_POPULAR_FILMS).collect(Collectors.toList());
+            result = sortedFilms.limit(DEFAULT_NUM_POPULAR_FILMS).collect(Collectors.toList());
+            log.debug(LOG_POPULAR_FILMS.message, countFilms, result.stream().mapToInt(Film::getId).toArray());
+            return result;
         }
-        return sortedFilms.limit(countFilms).collect(Collectors.toList());
+        result = sortedFilms.limit(countFilms).collect(Collectors.toList());
+        log.debug(LOG_POPULAR_FILMS.message, countFilms, result.stream().mapToInt(Film::getId).toArray());
+        return result;
     }
 
     @Override

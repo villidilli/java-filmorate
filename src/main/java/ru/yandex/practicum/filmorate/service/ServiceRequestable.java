@@ -22,10 +22,12 @@ public abstract class ServiceRequestable<T extends Requestable> {
     protected StorageRequestable<T> storage;
 
     public List<T> getAll() {
+        log.debug("/getAll");
         return storage.getAll();
     }
 
     public T create(T t, BindingResult bindResult) {
+        log.debug("/create");
         customValidate(t);
         annotationValidate(bindResult);
         storage.add(t);
@@ -33,6 +35,7 @@ public abstract class ServiceRequestable<T extends Requestable> {
     }
 
     public T update(T t, BindingResult bindResult) {
+        log.debug("/update");
         annotationValidate(bindResult);
         customValidate(t);
         isExist(t.getId());
@@ -41,6 +44,7 @@ public abstract class ServiceRequestable<T extends Requestable> {
     }
 
     public T getById(Integer id) {
+        log.debug("/getById");
         isExist(id);
         return storage.getById(id);
     }

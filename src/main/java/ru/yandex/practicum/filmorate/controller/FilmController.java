@@ -31,6 +31,7 @@ public class FilmController implements ControllerRequestable<Film> {
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getAll() {
+        log.debug("/getAll");
         return filmService.getAll();
     }
 
@@ -38,6 +39,7 @@ public class FilmController implements ControllerRequestable<Film> {
     @PostMapping
     @ResponseStatus(value = HttpStatus.OK)
     public Film create(@Valid @RequestBody Film film, BindingResult bindResult) {
+        log.debug("/create");
         return filmService.create(film, bindResult);
     }
 
@@ -45,6 +47,7 @@ public class FilmController implements ControllerRequestable<Film> {
     @PutMapping
     @ResponseStatus(value = HttpStatus.OK)
     public Film update(@Valid @RequestBody Film film, BindingResult bindResult) {
+        log.debug("/update");
         return filmService.update(film, bindResult);
     }
 
@@ -73,5 +76,4 @@ public class FilmController implements ControllerRequestable<Film> {
     public List<Film> getPopularFilms(@RequestParam(value = "count", required = false) Integer countFilms) {
         return filmService.getPopularFilms(countFilms);
     }
-
 }

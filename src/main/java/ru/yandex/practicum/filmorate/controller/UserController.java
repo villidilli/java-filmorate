@@ -31,6 +31,7 @@ public class UserController implements ControllerRequestable<User> {
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public List<User> getAll() {
+        log.debug("/getAll");
         return service.getAll();
     }
 
@@ -38,6 +39,7 @@ public class UserController implements ControllerRequestable<User> {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user, BindingResult bindResult) {
+        log.debug("/create");
         return service.create(user, bindResult);
     }
 
@@ -45,6 +47,7 @@ public class UserController implements ControllerRequestable<User> {
     @PutMapping
     @ResponseStatus(value = HttpStatus.OK)
     public User update(@Valid @RequestBody User user, BindingResult bindResult) {
+        log.debug("/update");
         return service.update(user, bindResult);
     }
 

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +12,7 @@ public class ExceptionResponse {
 	protected String exceptionMessage;
 	protected LocalTime timestamp;
 
-	public ExceptionResponse() {}
+	public ExceptionResponse(){}
 
 	public ExceptionResponse(Exception exception) {
 		exceptionClass = exception.getClass().getSimpleName();

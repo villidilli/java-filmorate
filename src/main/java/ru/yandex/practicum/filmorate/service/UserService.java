@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.StorageRequestable;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,32 +27,40 @@ public class UserService extends ServiceRequestable<User> {
     }
 
     public void addFriend(int id, int friendId) {
+        log.debug("/addFriend");
         isExist(id);
         isExist(friendId);
         storage.getById(id).getFriends().add(friendId);
         log.debug("User [{}] Friends[{}]", id, storage.getById(id).getFriends());
         storage.getById(friendId).getFriends().add(id);
-        log.debug("User [{}] Friends[{}]", friendId, storage.getById(friendId).getFriends());
+        log.debug(LOG_FRIEND.message, friendId, storage.getById(friendId).getFriends());
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
+        log.debug("/deleteFriend");
         isExist(id);
         isExist(friendId);
         storage.getById(id).getFriends().remove(friendId);
+        log.debug(LOG_DELETE_FRIEND.message, id, friendId);
         storage.getById(friendId).getFriends().remove(id);
+        log.debug(LOG_DELETE_FRIEND.message, friendId, id);
     }
 
     public List<User> getFriendsById(Integer id) {
+        log.debug("/getFriendsById");
         isExist(id);
+        log.debug(LOG_FRIEND.message, id, storage.getById(id).getFriends());
         return storage.getById(id).getFriends().stream().map(storage::getById).collect(Collectors.toList());
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
+        log.debug("/getCommonFriends");
         isExist(id);
         isExist(otherId);
         Set<Integer> idFriends = new HashSet<>(storage.getById(id).getFriends());
         Set<Integer> otherIdFriends = new HashSet<>(storage.getById(otherId).getFriends());
         idFriends.retainAll(otherIdFriends);
+        log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
         return idFriends.stream().map(storage::getById).collect(Collectors.toList());
 
     }
