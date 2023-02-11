@@ -5,8 +5,9 @@ public enum Message {
 	LOG_VALIDATION_SUCCESS("Валидация пройдена успешно"),
 	LOG_ANNOTATION_VALID_SUCCESS("Валидация аннотациями пройдена успешно"),
 	LOG_CUSTOM_VALID_SUCCESS("Валидация кастомная пройдена успешно"),
-	LOG_IS_EXIST_SUCCESS("Запрашиваемый объект найден"),
-	LOG_SIZE_OBJECTS("Количество объектов: [{}]");
+	LOG_IS_EXIST_SUCCESS("Запрашиваемый объект найден: ID [{}]"),
+	LOG_SIZE_OBJECTS("Количество объектов: [{}]"),
+	LOG_UPDATE_OBJECT("Обновлен объект: [{}]");
 
 	public final String message;
 

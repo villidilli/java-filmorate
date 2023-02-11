@@ -13,15 +13,13 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @Slf4j
 @RequestMapping("/users")
-public class UserController implements Controller<User> {
+public class UserController implements ControllerRequestable<User> {
     protected final UserService service;
 
     @Autowired

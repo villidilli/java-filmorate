@@ -7,22 +7,19 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.validation.BindingResult;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
 
 import java.util.List;
 
 @RestController
 @Slf4j
 @RequestMapping("/films")
-public class FilmController implements Controller<Film> {
+public class FilmController implements ControllerRequestable<Film> {
     private final FilmService filmService;
 
     @Autowired
