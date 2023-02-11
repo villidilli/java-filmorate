@@ -53,28 +53,28 @@ public class UserController implements Controller<User> {
 
     @PutMapping("/{id}/friends/{friendId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void addFriend(@PathVariable @Positive Integer id,
-                          @PathVariable @Positive Integer friendId) {
+    public void addFriend(@PathVariable Integer id,
+                          @PathVariable Integer friendId) {
         service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteFriend(@PathVariable @Positive Integer id,
-                             @PathVariable @Positive Integer friendId) {
+    public void deleteFriend(@PathVariable Integer id,
+                             @PathVariable Integer friendId) {
         service.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<User> getFriendsById(@PathVariable @Positive Integer id) {
+    public List<User> getFriendsById(@PathVariable Integer id) {
         return service.getFriendsById(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<User> getCommonFriends(@PathVariable @Positive Integer id,
-                                       @PathVariable @Positive Integer otherId) {
+    public List<User> getCommonFriends(@PathVariable Integer id,
+                                       @PathVariable Integer otherId) {
         return service.getCommonFriends(id, otherId);
     }
 }

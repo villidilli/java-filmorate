@@ -56,6 +56,17 @@ public class FilmService {
         filmStorage.getById(filmId).getUserLikes().add(userId);
     }
 
+    public void deleteLike(Integer filmId, Integer userId) {
+        isExist(filmId);
+        userService.isExist(userId);
+        filmStorage.getById(filmId).getUserLikes().remove(userId);
+    }
+
+    public Film getById(Integer filmId) {
+        isExist(filmId);
+        return filmStorage.getById(filmId);
+    }
+
     private void annotationValidate(BindingResult bindResult) throws ValidateException{
         if (bindResult.hasErrors()) throw new ValidateException(collectBindResultMessage(bindResult));
         log.debug(LOG_ANNOTATION_VALID_SUCCESS.message);
@@ -82,4 +93,7 @@ public class FilmService {
         if (filmStorage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message);
     }
+
+
+
 }

@@ -7,12 +7,14 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.validation.BindingResult;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 
 import java.util.List;
@@ -51,9 +53,23 @@ public class FilmController implements Controller<Film> {
 
     @PutMapping("/{id}/like/{userId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void addLike(@PathVariable @Positive Integer id,
-                        @PathVariable @Positive Integer userId) {
-        filmService.addLike(id, userId);
+    public void addLike(@PathVariable("id") Integer filmId,
+                        @PathVariable Integer userId) {
+        filmService.addLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteLike(@PathVariable("id") Integer filmId,
+                           @PathVariable Integer userId) {
+        filmService.deleteLike(filmId, userId);
+    }
+
+    @Validated
+    @GetMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Film getById(@PathVariable("id") Integer filmId) {
+        return filmService.getById(filmId);
     }
 
 }
