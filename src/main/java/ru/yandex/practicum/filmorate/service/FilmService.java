@@ -24,7 +24,6 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     public static final Integer DEFAULT_NUM_POPULAR_FILMS = 10;
-
     private final UserService userService;
 
     @Autowired
@@ -46,15 +45,15 @@ public class FilmService extends ServiceRequestable<Film> {
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
-        Stream<Film> sortedFilms = storage.getAll().stream().sorted((o1, o2) -> o2.getUserLikes().size()-o1.getUserLikes().size());
-        if(countFilms == null) {
-          return sortedFilms.limit(DEFAULT_NUM_POPULAR_FILMS).collect(Collectors.toList());
+        Stream<Film> sortedFilms = storage.getAll().stream().sorted((o1, o2) -> o2.getUserLikes().size() - o1.getUserLikes().size());
+        if (countFilms == null) {
+            return sortedFilms.limit(DEFAULT_NUM_POPULAR_FILMS).collect(Collectors.toList());
         }
         return sortedFilms.limit(countFilms).collect(Collectors.toList());
     }
 
     @Override
-    protected void customValidate(Film film) throws ValidateException{
+    protected void customValidate(Film film) throws ValidateException {
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
             throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
         log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
