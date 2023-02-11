@@ -56,7 +56,7 @@ public class UserControllerTest {
 	public void shouldReturnStatus200AndNameEqualsLoginWhenPOST() {
 		user.setName(null);
 		entityUser = restTemplate.postForEntity(url, user, User.class);
-		assertEquals(HttpStatus.OK, entityUser.getStatusCode());
+		assertEquals(HttpStatus.CREATED, entityUser.getStatusCode());
 		actualUser = entityUser.getBody();
 		assertEquals(actualUser.getName(), actualUser.getLogin());
 	}
@@ -75,7 +75,7 @@ public class UserControllerTest {
 	@Test
 	public void shouldReturnStatus200AndNameEqualsLoginWhenPUT() {
 		entityUser = restTemplate.postForEntity(url, user, User.class);
-		assertEquals(HttpStatus.OK, entityUser.getStatusCode());
+		assertEquals(HttpStatus.CREATED, entityUser.getStatusCode());
 		int id = entityUser.getBody().getId();
 		user.setId(id);
 		user.setName(null);
