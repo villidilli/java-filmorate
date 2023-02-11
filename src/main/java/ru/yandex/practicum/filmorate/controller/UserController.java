@@ -34,7 +34,6 @@ public class UserController implements ControllerRequestable<User> {
         return service.getAll();
     }
 
-
     @Override
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)

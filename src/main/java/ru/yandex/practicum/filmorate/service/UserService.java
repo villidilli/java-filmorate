@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Slf4j
 public class UserService extends ServiceRequestable<User> {
     @Autowired
-    private UserService(UserStorage storage) {
+    private UserService(StorageRequestable<User> storage) {
         super.storage = storage;
     }
 

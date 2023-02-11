@@ -14,16 +14,16 @@ import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
-import static ru.yandex.practicum.filmorate.util.Message.LOG_IS_EXIST_SUCCESS;
-import static ru.yandex.practicum.filmorate.util.Message.LOG_WRITE_OBJECT;
+import static ru.yandex.practicum.filmorate.util.Message.*;
 
 @Component
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage{
+public class InMemoryFilmStorage implements StorageRequestable<Film>{
     protected final Map<Integer, Film> films = new HashMap<>();
     protected Integer generatorId = 1;
     @Override
     public List<Film> getAll() {
+        log.debug(LOG_SIZE_OBJECTS.message, films.size());
         return new ArrayList<>(films.values());
     }
 
@@ -37,7 +37,6 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public Film update(Film film) {
-        isExist(film);
         films.put(film.getId(), film);
         log.debug(LOG_WRITE_OBJECT.message, film.getClass().getSimpleName());
         return film;
@@ -46,12 +45,5 @@ public class InMemoryFilmStorage implements FilmStorage{
     @Override
     public Film getById(Integer id) {
         return films.get(id);
-    }
-
-    private void isExist(Film film) {
-        Integer id = film.getId();
-        if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        if (films.get(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
-        log.debug(LOG_IS_EXIST_SUCCESS.message);
     }
 }

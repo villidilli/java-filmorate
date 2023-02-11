@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Requestable;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 
 import java.time.LocalDate;
 
@@ -24,10 +27,10 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     public static final Integer DEFAULT_NUM_POPULAR_FILMS = 10;
-    private final UserService userService;
+    private final ServiceRequestable<User> userService;
 
     @Autowired
-    public FilmService(FilmStorage storage, UserService userService) {
+    public FilmService(StorageRequestable<Film> storage, ServiceRequestable<User> userService) {
         super.storage = storage;
         this.userService = userService;
     }

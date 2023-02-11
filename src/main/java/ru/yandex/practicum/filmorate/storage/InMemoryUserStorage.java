@@ -18,12 +18,13 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 
 @Component
 @Slf4j
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements StorageRequestable<User>{
     protected final Map<Integer, User> users = new HashMap<>();
     protected Integer generatorId = 1;
 
     @Override
     public List<User> getAll() {
+        log.debug(LOG_SIZE_OBJECTS.message, users.size());
         return new ArrayList<>(users.values());
     }
 

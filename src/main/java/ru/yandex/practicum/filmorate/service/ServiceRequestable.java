@@ -22,7 +22,6 @@ public abstract class ServiceRequestable<T extends Requestable> {
     protected StorageRequestable<T> storage;
 
     public List<T> getAll() {
-        log.debug(LOG_SIZE_OBJECTS.message, storage.getAll().size());
         return storage.getAll();
     }
 
@@ -30,7 +29,6 @@ public abstract class ServiceRequestable<T extends Requestable> {
         customValidate(t);
         annotationValidate(bindResult);
         storage.add(t);
-        log.debug(LOG_WRITE_OBJECT.message, t.getId());
         return t;
     }
 
@@ -39,7 +37,6 @@ public abstract class ServiceRequestable<T extends Requestable> {
         customValidate(t);
         isExist(t.getId());
         storage.update(t);
-        log.debug(LOG_UPDATE_OBJECT.message, t.getId());
         return t;
     }
 

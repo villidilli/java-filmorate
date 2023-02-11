@@ -13,10 +13,6 @@ import ru.yandex.practicum.filmorate.exception.*;
 @RestControllerAdvice("ru.yandex.practicum")
 @Slf4j
 public class GlobalExceptionHandler {
-    private void logException(HttpStatus status, Exception exception) {
-        log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
-    }
-
     @ExceptionHandler
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     protected ExceptionResponse exceptionHandler(ValidateException e) {
@@ -39,5 +35,9 @@ public class GlobalExceptionHandler {
         log.debug("/handlerUnexpectedException");
         logException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         return new ExceptionResponse(e);
+    }
+
+    private void logException(HttpStatus status, Exception exception) {
+        log.debug("[" + exception.getClass().getSimpleName() + "] [" + status.value() + "]" + exception.getMessage());
     }
 }
