@@ -11,7 +11,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
@@ -22,6 +25,7 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Slf4j
 public class FilmService {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
+    public static final Integer DEFAULT_NUM_POPULAR_FILMS = 10;
     private final FilmStorage filmStorage;
     private final UserService userService;
 
@@ -67,6 +71,14 @@ public class FilmService {
         return filmStorage.getById(filmId);
     }
 
+    public List<Film> getPopularFilms(Integer countFilms) {
+        Stream<Film> sortedFilms = filmStorage.getAll().stream().sorted((o1, o2) -> o2.getUserLikes().size()-o1.getUserLikes().size());
+        if(countFilms == null) {
+          return sortedFilms.limit(DEFAULT_NUM_POPULAR_FILMS).collect(Collectors.toList());
+        }
+        return sortedFilms.limit(countFilms).collect(Collectors.toList());
+    }
+
     private void annotationValidate(BindingResult bindResult) throws ValidateException{
         if (bindResult.hasErrors()) throw new ValidateException(collectBindResultMessage(bindResult));
         log.debug(LOG_ANNOTATION_VALID_SUCCESS.message);
@@ -93,7 +105,4 @@ public class FilmService {
         if (filmStorage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message);
     }
-
-
-
 }

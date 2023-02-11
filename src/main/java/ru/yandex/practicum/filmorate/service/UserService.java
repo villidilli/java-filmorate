@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -42,6 +43,7 @@ public class UserService {
         customValidate(user);
         annotationValidate(bindResult);
         storage.add(user);
+        log.debug("Всего user: {}", storage.getAll());
         return user;
     }
 
@@ -50,6 +52,7 @@ public class UserService {
         customValidate(user);
         isExist(user.getId());
         storage.update(user);
+        log.debug("Всего user: {}", storage.getAll().size());
         return user;
     }
 
@@ -57,7 +60,9 @@ public class UserService {
         isExist(id);
         isExist(friendId);
         storage.getById(id).getFriends().add(friendId);
+        log.debug("User [{}] Friends[{}]", id, storage.getById(id).getFriends());
         storage.getById(friendId).getFriends().add(id);
+        log.debug("User [{}] Friends[{}]", friendId, storage.getById(friendId).getFriends());
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
@@ -69,18 +74,25 @@ public class UserService {
 
     public List<User> getFriendsById(Integer id) {
         isExist(id);
-        return storage.getAll().stream()
-                .filter(user -> user.getFriends().contains(id))
-                .collect(Collectors.toList());
+        return storage.getById(id).getFriends().stream().map(storage::getById).collect(Collectors.toList());
+//        return storage.getAll().stream()
+//                .filter(user -> user.getFriends().contains(id))
+//                .collect(Collectors.toList());
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
         isExist(id);
         isExist(otherId);
-        Set<Integer> idFriends = storage.getById(id).getFriends();
-        Set<Integer> otherIdFriends = storage.getById(otherId).getFriends();
+        Set<Integer> idFriends = new HashSet<>(storage.getById(id).getFriends());
+        Set<Integer> otherIdFriends = new HashSet<>(storage.getById(otherId).getFriends());
         idFriends.retainAll(otherIdFriends);
         return idFriends.stream().map(storage::getById).collect(Collectors.toList());
+
+    }
+
+    public User getById(Integer id) {
+        isExist(id);
+        return storage.getById(id);
     }
 
     private void annotationValidate(BindingResult bindResult) throws ValidateException {
@@ -109,6 +121,7 @@ public class UserService {
         if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message);
     }
+
 
 
 }

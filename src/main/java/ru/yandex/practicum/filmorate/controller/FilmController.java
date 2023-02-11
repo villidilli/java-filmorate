@@ -65,11 +65,16 @@ public class FilmController implements Controller<Film> {
         filmService.deleteLike(filmId, userId);
     }
 
-    @Validated
     @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Film getById(@PathVariable("id") Integer filmId) {
         return filmService.getById(filmId);
+    }
+
+    @GetMapping("/popular")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<Film> getPopularFilms(@RequestParam(value = "count", required = false) Integer countFilms) {
+        return filmService.getPopularFilms(countFilms);
     }
 
 }

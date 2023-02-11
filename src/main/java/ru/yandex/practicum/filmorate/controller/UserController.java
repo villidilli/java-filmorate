@@ -55,6 +55,7 @@ public class UserController implements Controller<User> {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void addFriend(@PathVariable Integer id,
                           @PathVariable Integer friendId) {
+        log.debug("/addFriend");
         service.addFriend(id, friendId);
     }
 
@@ -62,6 +63,7 @@ public class UserController implements Controller<User> {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteFriend(@PathVariable Integer id,
                              @PathVariable Integer friendId) {
+        log.debug("/deleteFriend");
         service.deleteFriend(id, friendId);
     }
 
@@ -76,5 +78,11 @@ public class UserController implements Controller<User> {
     public List<User> getCommonFriends(@PathVariable Integer id,
                                        @PathVariable Integer otherId) {
         return service.getCommonFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public User getById(@PathVariable Integer id) {
+        return service.getById(id);
     }
 }
