@@ -62,7 +62,7 @@ public class UserService extends ServiceRequestable<User> {
         Set<Integer> otherIdFriends = storage.getById(otherId).getFriends();
         log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
         return idFriends.stream()
-                .filter(i -> Collections.frequency(otherIdFriends, i) == 1)
+                .filter(otherIdFriends::contains)
                 .map(storage::getById).collect(Collectors.toList());
     }
 
