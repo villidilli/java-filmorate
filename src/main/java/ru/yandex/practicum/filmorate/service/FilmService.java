@@ -13,6 +13,8 @@ import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 
 import java.time.LocalDate;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,11 +27,13 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     private final ServiceRequestable<User> userService;
+    private final PopularDescComparator comparator;
 
     @Autowired
     public FilmService(StorageRequestable<Film> storage, ServiceRequestable<User> userService) {
         super.storage = storage;
         this.userService = userService;
+        comparator = new PopularDescComparator();
     }
 
     public void addLike(Integer filmId, Integer userId) {
@@ -48,12 +52,16 @@ public class FilmService extends ServiceRequestable<Film> {
 
     public List<Film> getPopularFilms(Integer countFilms) {
         log.debug("/getPopularFilm");
-        List<Film> result;
-        Stream<Film> sortedFilms = storage.getAll().stream()
-                .sorted((o1, o2) -> o2.getUserLikes().size() - o1.getUserLikes().size());
-        result = sortedFilms.limit(countFilms).collect(Collectors.toList());
-        log.debug(LOG_POPULAR_FILMS.message, countFilms, result.stream().mapToInt(Film::getId).toArray());
-        return result;
+
+        List<Film> films = storage.getAll();
+        films.sort(comparator);
+
+//        Stream<Film> sortedFilms = storage.getAll().stream()
+//                .sorted(new PopularDescComparator());
+//        result = sortedFilms.limit(countFilms).collect(Collectors.toList());
+//        log.debug(LOG_POPULAR_FILMS.message, countFilms, result.stream().mapToInt(Film::getId).toArray());
+        log.debug(LOG_POPULAR_FILMS.message, countFilms, films.stream().mapToInt(Film::getId).toArray());
+        return films;
     }
 
     @Override
@@ -64,7 +72,9 @@ public class FilmService extends ServiceRequestable<Film> {
     }
 
     private void addLikeToStorage(Integer filmId, Integer userId) {
-        storage.getById(filmId).getUserLikes().add(userId);
+        Film film = storage.getById(filmId);
+        film.getUserLikes().add(userId);
+        film.setLikes(film.getLikes() + 1);
         log.debug(LOG_ADD_LIKE.message, userId, filmId);
     }
 
