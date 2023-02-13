@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/users")
-public class UserController implements ControllerRequestable<User> {
+public class UserController extends ControllerRequestable<User> {
     protected final UserService service;
 
     @Autowired

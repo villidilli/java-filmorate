@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/films")
-public class FilmController implements ControllerRequestable<Film> {
+public class FilmController extends ControllerRequestable<Film> {
     private final FilmService filmService;
 
     @Autowired
