@@ -36,16 +36,14 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug("/addLike");
         isExist(filmId);
         userService.isExist(userId);
-        storage.getById(filmId).getUserLikes().add(userId);
-        log.debug(LOG_ADD_LIKE.message, userId, filmId);
+        addLikeToStorage(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
         isExist(filmId);
         userService.isExist(userId);
-        storage.getById(filmId).getUserLikes().remove(userId);
-        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
+        deleteLikeFromStorage(filmId, userId);
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
@@ -63,5 +61,15 @@ public class FilmService extends ServiceRequestable<Film> {
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
             throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
         log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
+    }
+
+    private void addLikeToStorage(Integer filmId, Integer userId) {
+        storage.getById(filmId).getUserLikes().add(userId);
+        log.debug(LOG_ADD_LIKE.message, userId, filmId);
+    }
+
+    private void deleteLikeFromStorage(Integer filmId, Integer userId) {
+        storage.getById(filmId).getUserLikes().remove(userId);
+        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }
 }
