@@ -10,8 +10,6 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,20 +29,14 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("/addFriend");
         isExist(id);
         isExist(friendId);
-        storage.getById(id).getFriends().add(friendId);
-        log.debug("User [{}] Friends[{}]", id, storage.getById(id).getFriends());
-        storage.getById(friendId).getFriends().add(id);
-        log.debug(LOG_FRIEND.message, friendId, storage.getById(friendId).getFriends());
+        addFriendToStorage(id, friendId);
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
         log.debug("/deleteFriend");
         isExist(id);
         isExist(friendId);
-        storage.getById(id).getFriends().remove(friendId);
-        log.debug(LOG_DELETE_FRIEND.message, id, friendId);
-        storage.getById(friendId).getFriends().remove(id);
-        log.debug(LOG_DELETE_FRIEND.message, friendId, id);
+        deleteFriendFromStorage(id, friendId);
     }
 
     public List<User> getFriendsById(Integer id) {
@@ -63,7 +55,8 @@ public class UserService extends ServiceRequestable<User> {
         log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
         return idFriends.stream()
                 .filter(otherIdFriends::contains)
-                .map(storage::getById).collect(Collectors.toList());
+                .map(storage::getById)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -71,5 +64,19 @@ public class UserService extends ServiceRequestable<User> {
         if (user.getLogin().contains(" ")) throw new ValidateException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
         if (user.getName() == null || user.getName().isEmpty()) user.setName(user.getLogin());
         log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
+    }
+
+    private void addFriendToStorage(Integer id, Integer friendId) {
+        storage.getById(id).getFriends().add(friendId);
+        log.debug("User [{}] Friends[{}]", id, storage.getById(id).getFriends());
+        storage.getById(friendId).getFriends().add(id);
+        log.debug(LOG_FRIEND.message, friendId, storage.getById(friendId).getFriends());
+    }
+
+    private void deleteFriendFromStorage(Integer id, Integer friendId) {
+        storage.getById(id).getFriends().remove(friendId);
+        log.debug(LOG_DELETE_FRIEND.message, id, friendId);
+        storage.getById(friendId).getFriends().remove(id);
+        log.debug(LOG_DELETE_FRIEND.message, friendId, id);
     }
 }
