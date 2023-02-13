@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,12 +58,12 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("/getCommonFriends");
         isExist(id);
         isExist(otherId);
-        Set<Integer> idFriends = new HashSet<>(storage.getById(id).getFriends());
-        Set<Integer> otherIdFriends = new HashSet<>(storage.getById(otherId).getFriends());
-        idFriends.retainAll(otherIdFriends);
+        Set<Integer> idFriends = storage.getById(id).getFriends();
+        Set<Integer> otherIdFriends = storage.getById(otherId).getFriends();
         log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
-        return idFriends.stream().map(storage::getById).collect(Collectors.toList());
-
+        return idFriends.stream()
+                .filter(i -> Collections.frequency(otherIdFriends, i) == 1)
+                .map(storage::getById).collect(Collectors.toList());
     }
 
     @Override
