@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.validation.constraints.*;
@@ -27,4 +28,14 @@ public class Film extends Requestable {
     private LocalDate releaseDate;
     @Positive (message = "Продолжительность должна быть положительным целым числом")
     private Long duration;
+
+    public void addLike(Integer userId) {
+        userLikes.add(userId);
+        countUserlikes = userLikes.size();
+    }
+
+    public void deleteLike(Integer userId) {
+        userLikes.remove(userId);
+        countUserlikes = userLikes.size();
+    }
 }

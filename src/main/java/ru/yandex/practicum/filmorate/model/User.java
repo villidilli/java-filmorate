@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
+
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.validation.constraints.*;
@@ -25,4 +26,12 @@ public class User extends Requestable {
     private String email;
     @PastOrPresent(message = "Дата рождения не должна быть в будущем времени")
     private LocalDate birthday;
+
+    public void addFriend(Integer userId) {
+        friends.add(userId);
+    }
+
+    public void deleteFriend(Integer userId) {
+        friends.remove(userId);
+    }
 }

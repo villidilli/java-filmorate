@@ -37,14 +37,16 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug("/addLike");
         isExist(filmId);
         userService.isExist(userId);
-        addLikeToStorage(filmId, userId);
+        storage.getById(filmId).addLike(userId);
+        log.debug(LOG_ADD_LIKE.message, userId, filmId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
         isExist(filmId);
         userService.isExist(userId);
-        deleteLikeFromStorage(filmId, userId);
+        storage.getById(filmId).deleteLike(userId);
+        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
@@ -65,19 +67,5 @@ public class FilmService extends ServiceRequestable<Film> {
         List<Film> list = storage.getAll();
         list.sort(comparator);
         return list;
-    }
-
-    private void addLikeToStorage(Integer filmId, Integer userId) {
-        log.debug("/addLikeToStorage");
-        Film film = storage.getById(filmId);
-        film.getUserLikes().add(userId);
-        film.setCountUserlikes(film.getCountUserlikes() + 1);
-        log.debug(LOG_ADD_LIKE.message, userId, filmId);
-    }
-
-    private void deleteLikeFromStorage(Integer filmId, Integer userId) {
-        log.debug("/deleteLikeFromStorage");
-        storage.getById(filmId).getUserLikes().remove(userId);
-        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }
 }
