@@ -13,11 +13,8 @@ import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 
 import java.time.LocalDate;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static ru.yandex.practicum.filmorate.exception.ValidateException.RELEASE_DATE_INVALID;
 import static ru.yandex.practicum.filmorate.util.Message.*;
@@ -27,13 +24,13 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     private final ServiceRequestable<User> userService;
-    private final PopularDescComparator comparator;
+    private final Comparator<Film> popularDescComparator;
 
     @Autowired
     public FilmService(StorageRequestable<Film> storage, ServiceRequestable<User> userService) {
         super.storage = storage;
         this.userService = userService;
-        comparator = new PopularDescComparator();
+        popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();
     }
 
     public void addLike(Integer filmId, Integer userId) {
@@ -52,16 +49,9 @@ public class FilmService extends ServiceRequestable<Film> {
 
     public List<Film> getPopularFilms(Integer countFilms) {
         log.debug("/getPopularFilm");
-
-        List<Film> films = storage.getAll();
-        films.sort(comparator);
-
-//        Stream<Film> sortedFilms = storage.getAll().stream()
-//                .sorted(new PopularDescComparator());
-//        result = sortedFilms.limit(countFilms).collect(Collectors.toList());
-//        log.debug(LOG_POPULAR_FILMS.message, countFilms, result.stream().mapToInt(Film::getId).toArray());
-        log.debug(LOG_POPULAR_FILMS.message, countFilms, films.stream().mapToInt(Film::getId).toArray());
-        return films;
+        List<Film> films = sortFilms(popularDescComparator);
+        log.debug(LOG_POPULAR_FILMS.message, countFilms, films);
+        return films.stream().limit(countFilms).collect(Collectors.toList());
     }
 
     @Override
@@ -71,14 +61,22 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
     }
 
+    private List<Film> sortFilms(Comparator<Film> comparator) {
+        List<Film> list = storage.getAll();
+        list.sort(comparator);
+        return list;
+    }
+
     private void addLikeToStorage(Integer filmId, Integer userId) {
+        log.debug("/addLikeToStorage");
         Film film = storage.getById(filmId);
         film.getUserLikes().add(userId);
-        film.setLikes(film.getLikes() + 1);
+        film.setCountUserlikes(film.getCountUserlikes() + 1);
         log.debug(LOG_ADD_LIKE.message, userId, filmId);
     }
 
     private void deleteLikeFromStorage(Integer filmId, Integer userId) {
+        log.debug("/deleteLikeFromStorage");
         storage.getById(filmId).getUserLikes().remove(userId);
         log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }

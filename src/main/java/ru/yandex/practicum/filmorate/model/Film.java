@@ -3,12 +3,10 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minidev.json.annotate.JsonIgnore;
-import ru.yandex.practicum.filmorate.service.PopularDescComparator;
 
 import javax.validation.constraints.*;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +16,7 @@ public class Film extends Requestable {
     @JsonIgnore
     private final Set<Integer> userLikes = new HashSet<>();
     @JsonIgnore
-    private Integer likes;
+    private int countUserlikes;
     @Positive(message = "ID должен быть положительным целым числом")
     @EqualsAndHashCode.Include
     private Integer id;
