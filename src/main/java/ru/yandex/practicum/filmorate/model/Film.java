@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.validation.constraints.*;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class Film extends Requestable {
+    @JsonIgnore
     private final Set<Integer> userLikes = new HashSet<>();
     @Positive(message = "ID должен быть положительным целым числом")
     @EqualsAndHashCode.Include
