@@ -8,7 +8,9 @@ import net.minidev.json.annotate.JsonIgnore;
 import javax.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -16,6 +18,11 @@ import java.util.Set;
 public class Film extends Requestable {
     @JsonIgnore
     private final Set<Integer> userLikes = new HashSet<>();
+    @NotBlank(message = "Необходимо указать минимум один id жанра")
+    private final List<Integer> genres = new ArrayList<>();
+    @NotBlank(message = "Необходимо указать id рейтинга MPA")
+    @Positive(message = "ID рейтинга должен быть положительным целым числом")
+    private Integer mpaRating;
     @JsonIgnore
     private int countUserlikes;
     @Positive(message = "ID должен быть положительным целым числом")
