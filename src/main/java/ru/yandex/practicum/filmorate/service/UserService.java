@@ -21,7 +21,7 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Service
 @Slf4j
 public class UserService extends ServiceRequestable<User> {
-    public static final String PRIORITY_STORAGE = "InMemoryUserStorage";
+    public static final String PRIORITY_STORAGE = "DbUserStorage";
     @Autowired
     private UserService(@Qualifier(PRIORITY_STORAGE) RequestableStorage<User> storage) {
         super.storage = storage;
