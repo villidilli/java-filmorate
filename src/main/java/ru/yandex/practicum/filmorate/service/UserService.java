@@ -23,7 +23,7 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Slf4j
 public class UserService extends ServiceRequestable<User> {
     @Autowired
-    private UserService(@Qualifier("DbUserStorage") RequestableStorage<User> storage) {
+    private UserService(@Qualifier("InMemoryUserStorage") RequestableStorage<User> storage) {
         super.storage = storage;
     }
 

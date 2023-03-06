@@ -29,7 +29,7 @@ public class FilmService extends ServiceRequestable<Film> {
     private final Comparator<Film> popularDescComparator;
 
     @Autowired
-    public FilmService(@Qualifier("DbFilmStorage") RequestableStorage<Film> storage, ServiceRequestable<User> userService) {
+    public FilmService(@Qualifier("InMemoryFilmStorage") RequestableStorage<Film> storage, ServiceRequestable<User> userService) {
         super.storage = storage;
         this.userService = userService;
         popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();
