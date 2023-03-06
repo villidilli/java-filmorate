@@ -8,8 +8,7 @@ import org.springframework.validation.FieldError;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Requestable;
-import ru.yandex.practicum.filmorate.storage.InMemoryRequestableStorage;
-import ru.yandex.practicum.filmorate.storage.RequestableStorage;
+import ru.yandex.practicum.filmorate.dao.RequestableStorage;
 
 import java.util.List;
 

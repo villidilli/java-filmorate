@@ -1,10 +1,9 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.List;
-
-@Component("DbFilmStorage")
+@Repository("DbFilmStorage")
 public class DbFilmStorage extends DbRequestableStorage<Film>{
 }

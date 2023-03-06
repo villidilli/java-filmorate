@@ -1,6 +1,5 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
-import org.springframework.validation.BindingResult;
 import ru.yandex.practicum.filmorate.model.Requestable;
 
 import java.util.List;

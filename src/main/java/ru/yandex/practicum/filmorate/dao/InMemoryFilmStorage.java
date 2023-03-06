@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.stereotype.Component;
 
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 
-@Component("InMemoryFilmStorage")
+@Repository("InMemoryFilmStorage")
 public class InMemoryFilmStorage extends InMemoryRequestableStorage<Film> {
 }

@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryRequestableStorage;
-import ru.yandex.practicum.filmorate.storage.RequestableStorage;
+import ru.yandex.practicum.filmorate.dao.RequestableStorage;
 
 import java.time.LocalDate;
 
@@ -25,11 +24,13 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Slf4j
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
+    public static final String PRIORITY_STORAGE = "InMemoryFilmStorage";
     private final ServiceRequestable<User> userService;
     private final Comparator<Film> popularDescComparator;
 
     @Autowired
-    public FilmService(@Qualifier("InMemoryFilmStorage") RequestableStorage<Film> storage, ServiceRequestable<User> userService) {
+    public FilmService(@Qualifier("InMemoryFilmStorage") RequestableStorage<Film> storage,
+                       ServiceRequestable<User> userService) {
         super.storage = storage;
         this.userService = userService;
         popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();

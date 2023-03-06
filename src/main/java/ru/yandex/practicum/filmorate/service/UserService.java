@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryRequestableStorage;
-import ru.yandex.practicum.filmorate.storage.RequestableStorage;
+import ru.yandex.practicum.filmorate.dao.RequestableStorage;
 
 import java.util.List;
 import java.util.Set;
@@ -22,8 +21,9 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Service
 @Slf4j
 public class UserService extends ServiceRequestable<User> {
+    public static final String PRIORITY_STORAGE = "InMemoryUserStorage";
     @Autowired
-    private UserService(@Qualifier("InMemoryUserStorage") RequestableStorage<User> storage) {
+    private UserService(@Qualifier(PRIORITY_STORAGE) RequestableStorage<User> storage) {
         super.storage = storage;
     }
 
