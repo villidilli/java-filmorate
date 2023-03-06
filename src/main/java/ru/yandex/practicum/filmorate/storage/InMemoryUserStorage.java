@@ -5,5 +5,5 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 @Component
-public class InMemoryUserStorage extends StorageRequestable<User> {
+public class InMemoryUserStorage extends InMemoryRequestableStorage<User> {
 }

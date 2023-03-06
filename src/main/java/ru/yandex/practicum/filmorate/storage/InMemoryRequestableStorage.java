@@ -12,7 +12,7 @@ import java.util.Map;
 import static ru.yandex.practicum.filmorate.util.Message.*;
 
 @Slf4j
-public abstract class StorageRequestable<T extends Requestable> {
+public abstract class InMemoryRequestableStorage<T extends Requestable> implements RequestableStorage<T> {
     protected final Map<Integer, T> objects = new HashMap<>();
     protected Integer generatorId = 1;
 

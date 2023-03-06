@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.StorageRequestable;
+import ru.yandex.practicum.filmorate.storage.InMemoryRequestableStorage;
+import ru.yandex.practicum.filmorate.storage.RequestableStorage;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +23,7 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Slf4j
 public class UserService extends ServiceRequestable<User> {
     @Autowired
-    private UserService(StorageRequestable<User> storage) {
+    private UserService(@Qualifier("DbUserStorage") RequestableStorage<User> storage) {
         super.storage = storage;
     }
 

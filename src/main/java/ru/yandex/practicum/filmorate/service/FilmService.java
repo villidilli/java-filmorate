@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.StorageRequestable;
+import ru.yandex.practicum.filmorate.storage.InMemoryRequestableStorage;
+import ru.yandex.practicum.filmorate.storage.RequestableStorage;
 
 import java.time.LocalDate;
 
@@ -27,7 +29,7 @@ public class FilmService extends ServiceRequestable<Film> {
     private final Comparator<Film> popularDescComparator;
 
     @Autowired
-    public FilmService(StorageRequestable<Film> storage, ServiceRequestable<User> userService) {
+    public FilmService(@Qualifier("DbFilmStorage") RequestableStorage<Film> storage, ServiceRequestable<User> userService) {
         super.storage = storage;
         this.userService = userService;
         popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();
