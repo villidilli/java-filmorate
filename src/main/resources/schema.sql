@@ -54,6 +54,6 @@ CREATE TABLE film_like (
 CREATE TABLE user_friend (
     id_user int NOT NULL REFERENCES users(id_user) ON DELETE CASCADE,
     id_friend int NOT NULL REFERENCES users(id_user) ON DELETE CASCADE,
-    friendship_status boolean,
+    --friendship_status boolean,
     PRIMARY KEY (id_user, id_friend)
 );

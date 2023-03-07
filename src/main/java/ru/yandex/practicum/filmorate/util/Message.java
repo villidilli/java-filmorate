@@ -8,7 +8,7 @@ public enum Message {
 	LOG_SIZE_OBJECTS("Количество объектов: [{}]"),
 	LOG_UPDATE_OBJECT("Обновлен объект: [{}]"),
 	LOG_DELETE_FRIEND("User [{}]: Friend [{}] удален"),
-	LOG_FRIEND("User [{}]: его друзья[{}]"),
+	LOG_FRIEND("Пользователю [{}]: добавлен друг [{}]"),
 	LOG_COMMON_FRIENDS("Users [{}]-[{}]: общие друзья [{}]"),
 	LOG_ADD_LIKE("User [{}] лайкнул Film [{}]"),
 	LOG_DELETE_LIKE("User [{}] удалил лайк Film [{}]"),

@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import ru.yandex.practicum.filmorate.dao.RequestableStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.dao.RequestableStorage;
 
 import java.util.List;
 import java.util.Set;
@@ -21,17 +21,17 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Service
 @Slf4j
 public class UserService extends ServiceRequestable<User> {
-    public static final String PRIORITY_STORAGE = "DbUserStorage";
+
     @Autowired
-    private UserService(@Qualifier(PRIORITY_STORAGE) RequestableStorage<User> storage) {
-        super.storage = storage;
+    private UserService(UserStorage storage) {
+        this.storage = storage;
     }
 
     public void addFriend(int id, int friendId) {
         log.debug("/addFriend");
         isExist(id);
         isExist(friendId);
-        addFriendship(id, friendId);
+        storage.addFriend(id, friendId);
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
@@ -66,13 +66,6 @@ public class UserService extends ServiceRequestable<User> {
         if (user.getLogin().contains(" ")) throw new ValidateException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
         if (user.getName() == null || user.getName().isEmpty()) user.setName(user.getLogin());
         log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
-    }
-
-    private void addFriendship(Integer id, Integer friendId) {
-        storage.getById(id).addFriend(friendId);
-        log.debug(LOG_FRIEND.message, id, storage.getById(id).getFriends());
-        storage.getById(friendId).addFriend(id);
-        log.debug(LOG_FRIEND.message, friendId, storage.getById(friendId).getFriends());
     }
 
     private void deleteFriendship(Integer id, Integer friendId) {

@@ -27,10 +27,6 @@ public class User extends Requestable {
     @PastOrPresent(message = "Дата рождения не должна быть в будущем времени")
     private LocalDate birthday;
 
-    public void addFriend(Integer userId) {
-        friends.add(userId);
-    }
-
     public void deleteFriend(Integer userId) {
         friends.remove(userId);
     }

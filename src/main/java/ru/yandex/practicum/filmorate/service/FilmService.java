@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import ru.yandex.practicum.filmorate.dao.RequestableStorage;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.dao.RequestableStorage;
 
 import java.time.LocalDate;
 
@@ -29,7 +29,7 @@ public class FilmService extends ServiceRequestable<Film> {
     private final Comparator<Film> popularDescComparator;
 
     @Autowired
-    public FilmService(@Qualifier("InMemoryFilmStorage") RequestableStorage<Film> storage,
+    public FilmService(RequestableStorage<Film> storage,
                        ServiceRequestable<User> userService) {
         super.storage = storage;
         this.userService = userService;
