@@ -12,8 +12,10 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
@@ -42,28 +44,29 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("/deleteFriend");
         isExist(id);
         isExist(friendId);
-        deleteFriendship(id, friendId);
+        storage.deleteFriend(id, friendId);
     }
 
     public List<User> getFriendsById(Integer id) {
         log.debug("/getFriendsById");
         isExist(id);
-        return storage.getFriends(id);
+//        return storage.getFriends(id);
 //        return storage.getById(id).getFriends().stream().map(storage::getById).collect(Collectors.toList());
+        List<User> friends = storage.getFriends(id);
+        friends.forEach(this::reCheckFriends);
+        return friends;
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
-//        log.debug("/getCommonFriends");
-//        isExist(id);
-//        isExist(otherId);
-//        Set<Integer> idFriends = storage.getById(id).getFriends();
-//        Set<Integer> otherIdFriends = storage.getById(otherId).getFriends();
-//        log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
-//        return idFriends.stream()
-//                .filter(otherIdFriends::contains)
-//                .map(storage::getById)
-//                .collect(Collectors.toList());
-        return null;
+        log.debug("/getCommonFriends");
+        isExist(id);
+        isExist(otherId);
+        List<User> idFriends = storage.getFriends(id);
+        List<User> otherIdFriends = storage.getFriends(otherId);
+        log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
+        return idFriends.stream()
+                .filter(otherIdFriends::contains)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -77,8 +80,7 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("/create");
         customValidate(user);
         annotationValidate(bindResult);
-        storage.add(user);
-        return user;
+        return storage.add(user);
     }
 
     @Override
@@ -87,15 +89,23 @@ public class UserService extends ServiceRequestable<User> {
         annotationValidate(bindResult);
         customValidate(user);
         isExist(user.getId());
-        storage.update(user);
+        user = storage.update(user);
+        reCheckFriends(user);
         return user;
     }
 
+    private void reCheckFriends(User user) {
+        user.setFriends(storage.getFriends(user.getId()));
+    }
+
+
     @Override
-    public User getById(Integer id) {
+    public User getById(Integer id) { //todo создать индекс
         log.debug("/getById");
         isExist(id);
-        return storage.getById(id);
+        User backedUser = storage.getById(id);
+        reCheckFriends(backedUser);
+        return backedUser;
     }
 
     @Override
@@ -110,12 +120,5 @@ public class UserService extends ServiceRequestable<User> {
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message, id);
-    }
-
-    private void deleteFriendship(Integer id, Integer friendId) {
-//        storage.getById(id).deleteFriend(friendId);
-//        log.debug(LOG_DELETE_FRIEND.message, id, friendId);
-//        storage.getById(friendId).deleteFriend(id);
-//        log.debug(LOG_DELETE_FRIEND.message, friendId, id);
     }
 }

@@ -12,63 +12,59 @@ import ru.yandex.practicum.filmorate.util.UserMapper;
 
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.dao.DbQuery.*;
+
 @Repository
 @Slf4j
 public class UserStorage {
 	private final JdbcTemplate jdbcTemplate;
 	private SimpleJdbcInsert jdbcInsert;
-	private final String tableName = "users";
-	private final String nameIdColumn = "id_user";
-	private final String queryGetAll = "SELECT * FROM " + tableName;
-	private final String queryGetById  = "SELECT * FROM " + tableName + " WHERE " + nameIdColumn + "=?";
-	private final String queryUpdate =
-			"UPDATE " + tableName + " SET login=?, name=?, email=?, birthday=?" + "WHERE " + nameIdColumn + "=?";
-	private final String queryGetObjById = "SELECT * FROM " + tableName + " WHERE " + nameIdColumn + "=?";
-	private final String queryAddFriend = "INSERT INTO user_friend (id_user, id_friend) VALUES (?,?)";
-	private final String queryGetFriends =
-			"SELECT * FROM users WHERE id_user IN (SELECT id_friend FROM user_friend WHERE id_user = ?)";
 
 	@Autowired
 	public UserStorage(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public User add(User user) {
+	public User add(User user) { //todo добавить запрос из БД
 		log.debug("/add");
 		jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
-		jdbcInsert.withTableName(tableName).usingGeneratedKeyColumns(nameIdColumn);
+		jdbcInsert.withTableName(USERS_TABLE.query).usingGeneratedKeyColumns(USER_ID.query);
 		Number idUser = jdbcInsert.executeAndReturnKey(new BeanPropertySqlParameterSource(user));
-		user.setId(idUser.intValue());
-		return user;
+		return jdbcTemplate.queryForObject(USER_GET_BY_ID.query, new UserMapper(), idUser.intValue());
 	}
 
 	public List<User> getAll() {
 		log.debug("/getAll");
-		return jdbcTemplate.query(queryGetAll, new UserMapper());
+		return jdbcTemplate.query(USER_GET_ALL.query, new UserMapper());
 	}
 
 	public User getById(Integer id) {
 		log.debug("/getById");
-		return jdbcTemplate.query(queryGetById, new UserMapper(), id).stream()
+		return jdbcTemplate.query(USER_GET_BY_ID.query, new UserMapper(), id).stream()
 				.findAny().orElse(null);
+//		return jdbcTemplate.queryForObject(USER_GET_BY_ID.query, new UserMapper(), id);
 	}
 
-	public User update(User user) {
+	public User update(User user) { //todo добавить запрос из БД
 		log.debug("/update");
 		log.debug(String.valueOf(user.getId()));
-		jdbcTemplate.update(queryUpdate,
+		jdbcTemplate.update(USER_UPDATE.query,
 							user.getLogin(), user.getName(),user.getEmail(), user.getBirthday(), user.getId());
-		jdbcTemplate.query(queryGetObjById, new UserMapper(), user.getId());
-		return user;
+		return jdbcTemplate.queryForObject(USER_GET_BY_ID.query, new UserMapper(), user.getId());
 	}
 
 	public void addFriend(int id, int friendId) {
 		log.debug("/addFriend");
-		jdbcTemplate.update(queryAddFriend, id, friendId);
+		jdbcTemplate.update(ADD_FRIEND.query, id, friendId);
 	}
 
 	public List<User> getFriends(Integer id) {
 		log.debug("/getFriends");
-		return jdbcTemplate.query(queryGetFriends, new UserMapper(), id);
+		return jdbcTemplate.query(GET_FRIENDS.query, new UserMapper(), id);
+	}
+
+	public void deleteFriend(Integer id, Integer friendId) {
+		log.debug("/deleteFriend");
+		jdbcTemplate.update(DELETE_FRIEND.query, id, friendId);
 	}
 }

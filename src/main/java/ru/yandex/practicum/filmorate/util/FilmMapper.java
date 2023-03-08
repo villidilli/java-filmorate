@@ -11,6 +11,16 @@ import java.sql.SQLException;
 public class FilmMapper implements RowMapper<Film> {
     @Override
     public Film mapRow(ResultSet rs, int rowNum) {
-            return null;
+        Film film = new Film();
+        try {
+            film.setId(rs.getInt("id_user"));
+            film.setName(rs.getString("name"));
+            film.setDescription(rs.getString("description"));
+            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+            film.setDuration(rs.getLong("duration"));
+            return film;
+        } catch (SQLException e) {
+            throw new MapperException("[" + e.getClass().getSimpleName() + "] " + e.getMessage());
+        }
     }
 }
