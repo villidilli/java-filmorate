@@ -50,11 +50,11 @@ public class UserService extends ServiceRequestable<User> {
     public List<User> getFriendsById(Integer id) {
         log.debug("/getFriendsById");
         isExist(id);
-//        return storage.getFriends(id);
+        return storage.getFriends(id);
 //        return storage.getById(id).getFriends().stream().map(storage::getById).collect(Collectors.toList());
-        List<User> friends = storage.getFriends(id);
-        friends.forEach(this::reCheckFriends);
-        return friends;
+//        List<User> friends = storage.getFriends(id);
+//        friends.forEach(this::reCheckFriends);
+//        return friends;
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
@@ -89,23 +89,25 @@ public class UserService extends ServiceRequestable<User> {
         annotationValidate(bindResult);
         customValidate(user);
         isExist(user.getId());
-        user = storage.update(user);
-        reCheckFriends(user);
-        return user;
+        return storage.update(user);
+//        user = storage.update(user);
+//        reCheckFriends(user);
+//        return user;
     }
 
-    private void reCheckFriends(User user) {
-        user.setFriends(storage.getFriends(user.getId()));
-    }
+//    private void reCheckFriends(User user) {
+//        user.setFriends(storage.getFriends(user.getId()));
+//    }
 
 
     @Override
     public User getById(Integer id) { //todo создать индекс
         log.debug("/getById");
         isExist(id);
-        User backedUser = storage.getById(id);
-        reCheckFriends(backedUser);
-        return backedUser;
+        return storage.getById(id);
+//        User backedUser = storage.getById(id);
+//        reCheckFriends(backedUser);
+//        return backedUser;
     }
 
     @Override
