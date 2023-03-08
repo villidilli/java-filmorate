@@ -13,8 +13,8 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class User extends Requestable {
-    @JsonIgnore
-    private final Set<Integer> friends = new HashSet<>();
+//    @JsonIgnore
+//    private final Set<Integer> friends = new HashSet<>();
     @Positive(message = "ID должен быть положительным целым числом")
     @EqualsAndHashCode.Include
     private Integer id;
@@ -27,7 +27,7 @@ public class User extends Requestable {
     @PastOrPresent(message = "Дата рождения не должна быть в будущем времени")
     private LocalDate birthday;
 
-    public void deleteFriend(Integer userId) {
-        friends.remove(userId);
-    }
+//    public void deleteFriend(Integer userId) {
+//        friends.remove(userId);
+//    }
 }

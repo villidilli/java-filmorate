@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 
 @Repository
-public class FilmStorage extends RequestableStorage<Film> {
+public class FilmStorage {
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
@@ -18,26 +18,24 @@ public class FilmStorage extends RequestableStorage<Film> {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
+//    @Override
     public List<Film> getAll() {
         return null;
     }
 
-    @Override
+//    @Override
     public Film getById(Integer id) {
         return null;
     }
 
-    @Override
+//    @Override
     public Film update(Film film) {
         return null;
     }
 
-    @Override
+//    @Override
     public Film add(Film film) {
         return null;
     }
 
-    @Override
-    public void addFriend(int id, int friendId) {}
 }
