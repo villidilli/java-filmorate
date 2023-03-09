@@ -13,7 +13,9 @@ import ru.yandex.practicum.filmorate.util.MpaMapper;
 import ru.yandex.practicum.filmorate.util.UserMapper;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.dao.DbQuery.*;
 
@@ -26,6 +28,9 @@ public class FilmStorage {
     @Autowired
     public FilmStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName(FILMS_TABLE.query)
+                .usingGeneratedKeyColumns(FILM_ID.query);
     }
 
     public List<Film> getAll() {
@@ -43,11 +48,22 @@ public class FilmStorage {
 
     public Film add(Film film) {
         log.debug("/add");
-        int idFilm = getGeneratedKey(film);
-        updateFilmMpaId(film.getMpa().getId(), idFilm);
-        Film dbFilm = jdbcTemplate.queryForObject(FILM_GET_BY_ID.query, new FilmMapper(), idFilm);
-        dbFilm.setMpa(getMpa(film.getMpa().getId()));
-        return dbFilm;
+        log.debug(film.toString());//todo delete
+        int filmId = jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
+        Mpa mpa = getMpa(film.getMpa().getId());
+        film.setId(filmId);
+        film.setMpa(mpa);
+        return film;
+    }
+
+    private Map<String, Object> convertFilmToRow(Film film) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("name", film.getName());
+        param.put("description", film.getDescription());
+        param.put("release_date", film.getReleaseDate());
+        param.put("duration", film.getDuration());
+        param.put("id_mpa", film.getMpa().getId());
+        return param;
     }
 
     private int getGeneratedKey(Film film) {
