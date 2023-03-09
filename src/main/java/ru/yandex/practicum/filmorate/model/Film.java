@@ -16,14 +16,6 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class Film extends Requestable {
-    @JsonIgnore
-    private final Set<Integer> userLikes = new HashSet<>();
-//    @NotBlank(message = "Необходимо указать минимум один id жанра")
-    private final List<Integer> genres = new ArrayList<>();
-    @NotBlank(message = "Необходимо указать рейтинг MPA")
-    private MpaRating mpa;
-    @JsonIgnore
-    private int countUserlikes;
     @Positive(message = "ID должен быть положительным целым числом")
     @EqualsAndHashCode.Include
     private Integer id;
@@ -34,14 +26,11 @@ public class Film extends Requestable {
     private LocalDate releaseDate;
     @Positive (message = "Продолжительность должна быть положительным целым числом")
     private Long duration;
+    //    @NotBlank(message = "Необходимо указать рейтинг MPA")
+    private Mpa mpa;
+    //    @NotBlank(message = "Необходимо указать минимум один id жанра")
+    private final List<Integer> genres = new ArrayList<>();
+    @JsonIgnore
+    private final Set<Integer> userLikes = new HashSet<>();
 
-    public void addLike(Integer userId) {
-        userLikes.add(userId);
-        countUserlikes = userLikes.size();
-    }
-
-    public void deleteLike(Integer userId) {
-        userLikes.remove(userId);
-        countUserlikes = userLikes.size();
-    }
 }

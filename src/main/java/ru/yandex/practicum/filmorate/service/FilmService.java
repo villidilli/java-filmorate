@@ -28,7 +28,7 @@ public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     public static final String PRIORITY_STORAGE = "InMemoryFilmStorage";
     private final UserService userService;
-    private final Comparator<Film> popularDescComparator;
+//    private final Comparator<Film> popularDescComparator;
     private final FilmStorage storage;
 
     @Autowired
@@ -36,30 +36,31 @@ public class FilmService extends ServiceRequestable<Film> {
                        UserService userService) {
         this.storage = storage;
         this.userService = userService;
-        popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();
+//        popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();
     }
 
     public void addLike(Integer filmId, Integer userId) {
-        log.debug("/addLike");
-        isExist(filmId);
-        userService.isExist(userId);
-        storage.getById(filmId).addLike(userId);
-        log.debug(LOG_ADD_LIKE.message, userId, filmId);
+//        log.debug("/addLike");
+//        isExist(filmId);
+//        userService.isExist(userId);
+//        storage.getById(filmId).addLike(userId);
+//        log.debug(LOG_ADD_LIKE.message, userId, filmId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-        log.debug("/deleteLike");
-        isExist(filmId);
-        userService.isExist(userId);
-        storage.getById(filmId).deleteLike(userId);
-        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
+//        log.debug("/deleteLike");
+//        isExist(filmId);
+//        userService.isExist(userId);
+//        storage.getById(filmId).deleteLike(userId);
+//        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
-        log.debug("/getPopularFilm");
-        List<Film> films = sortFilms(popularDescComparator);
-        log.debug(LOG_POPULAR_FILMS.message, countFilms, films);
-        return films.stream().limit(countFilms).collect(Collectors.toList());
+//        log.debug("/getPopularFilm");
+//        List<Film> films = sortFilms(popularDescComparator);
+//        log.debug(LOG_POPULAR_FILMS.message, countFilms, films);
+//        return films.stream().limit(countFilms).collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -73,8 +74,7 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug("/create");
         customValidate(film);
         annotationValidate(bindResult);
-        storage.add(film);
-        return film;
+        return storage.add(film);
     }
 
     @Override
