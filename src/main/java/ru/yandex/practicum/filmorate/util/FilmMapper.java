@@ -22,6 +22,7 @@ public class FilmMapper implements RowMapper<Film> {
             film.setDescription(rs.getString("description"));
             film.setReleaseDate(rs.getDate("release_date").toLocalDate());
             film.setDuration(rs.getLong("duration"));
+            film.getMpa().setId(rs.getInt("id_mpa"));
             return film;
         } catch (SQLException e) {
             throw new MapperException("[" + e.getClass().getSimpleName() + "] " + e.getMessage());

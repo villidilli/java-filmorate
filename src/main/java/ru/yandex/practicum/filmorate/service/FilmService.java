@@ -40,18 +40,17 @@ public class FilmService extends ServiceRequestable<Film> {
     }
 
     public void addLike(Integer filmId, Integer userId) {
-//        log.debug("/addLike");
-//        isExist(filmId);
-//        userService.isExist(userId);
-//        storage.getById(filmId).addLike(userId);
-//        log.debug(LOG_ADD_LIKE.message, userId, filmId);
+        log.debug("/addLike");
+        isExist(filmId);
+        userService.isExist(userId);
+        storage.addLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-//        log.debug("/deleteLike");
-//        isExist(filmId);
-//        userService.isExist(userId);
-//        storage.getById(filmId).deleteLike(userId);
+        log.debug("/deleteLike");
+        isExist(filmId);
+        userService.isExist(userId);
+        storage.deleteLike(filmId, userId);
 //        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }
 
@@ -83,8 +82,7 @@ public class FilmService extends ServiceRequestable<Film> {
         annotationValidate(bindResult);
         customValidate(film);
         isExist(film.getId());
-        storage.update(film);
-        return film;
+        return storage.update(film);
     }
 
     @Override

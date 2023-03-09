@@ -19,8 +19,12 @@ public enum DbQuery {
     GET_FRIENDS_AS_USER("SELECT * FROM users WHERE id_user IN (SELECT id_friend FROM user_friend WHERE id_user= ?)"),
     GET_FRIENDS_AS_ID("SELECT id_friend FROM user_friend WHERE id_user=?"),
     DELETE_FRIEND("DELETE FROM user_friend WHERE id_user=? AND id_friend=?"),
-    MPA_GET_BY_ID("SELECT FROM mpa WHERE id_mpa=?"),
-    MPA_GET_NAME_BY_ID("SELECT * FROM mpa WHERE id_mpa = ?"),
+    MPA_GET_BY_ID("SELECT * FROM mpa WHERE id_mpa = ?"),
+    GENRE_GET_BY_ID("SELECT * FROM genres WHERE id_genre = ?"),
+    GENRES_GET_BY_FILM_ID("SELECT * FROM genres WHERE id_genre IN (SELECT id_genre FROM film_genre WHERE id_film = ?)"),
+    FILM_GENRE_SAVE("INSERT INTO film_genre (id_film, id_genre) VALUES (?,?)"),
+    FILM_LIKE_SAVE("INSERT INTO film_like (id_film, id_user) VALUES (?,?)"),
+    RATE_GET_BY_FILM_ID("SELECT COUNT(DISTINCT id_user) FROM film_like WHERE id_film = ?"),
     FILM_UPDATE_ID_MPA("UPDATE films SET id_mpa=? WHERE id_film=?");
 
     final String query;
