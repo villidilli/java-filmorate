@@ -26,7 +26,7 @@ public class User extends Requestable {
     private String email;
     @PastOrPresent(message = "Дата рождения не должна быть в будущем времени")
     private LocalDate birthday;
-    @JsonIgnore
-//    private final Set<Integer> friends = new HashSet<>();
-    private List<User> friends = new ArrayList<>();
+//    @JsonIgnore
+    private List<Friend> friends = new ArrayList<>();
+
 }

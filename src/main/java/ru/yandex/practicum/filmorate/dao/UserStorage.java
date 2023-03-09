@@ -2,12 +2,13 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.util.FriendMapper;
 import ru.yandex.practicum.filmorate.util.UserMapper;
 
 import java.util.List;
@@ -58,9 +59,26 @@ public class UserStorage {
 		jdbcTemplate.update(ADD_FRIEND.query, id, friendId);
 	}
 
-	public List<User> getFriends(Integer id) {
-		log.debug("/getFriends");
-		return jdbcTemplate.query(GET_FRIENDS.query, new UserMapper(), id);
+	public List<User> getFriendsAsUser(Integer id) {
+		log.debug("/getFriendsAsUser");
+		return jdbcTemplate.query(GET_FRIENDS_AS_USER.query, new UserMapper(), id);
+	}
+
+	public List<Friend> getFriendsAsFriend(Integer id) {
+		log.debug("/getFriendsAsFriend");
+		return jdbcTemplate.query(GET_FRIENDS_AS_ID.query, new FriendMapper(), id);
+	}
+
+	public Boolean getStatusFriendShip(Integer id, Integer id2) {
+		List<Integer> mutualFriends = jdbcTemplate.queryForList("" +
+				"SELECT id_user AS mutual_friendship\n" +
+				"FROM USER_FRIEND uf\n" +
+				"WHERE id_user IN (\n" +
+				"SELECT id_friend\n" +
+				"FROM user_friend uf2\n" +
+				"WHERE uf2.id_user=?\n" +
+				") AND uf.id_friend = ?", Integer.class,  id, id);
+		return mutualFriends.contains(id2);
 	}
 
 	public void deleteFriend(Integer id, Integer friendId) {

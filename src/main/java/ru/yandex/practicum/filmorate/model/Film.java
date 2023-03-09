@@ -20,9 +20,8 @@ public class Film extends Requestable {
     private final Set<Integer> userLikes = new HashSet<>();
 //    @NotBlank(message = "Необходимо указать минимум один id жанра")
     private final List<Integer> genres = new ArrayList<>();
-//    @NotBlank(message = "Необходимо указать id рейтинга MPA")
-    @Positive(message = "ID рейтинга должен быть положительным целым числом")
-    private Integer mpaRating;
+    @NotBlank(message = "Необходимо указать рейтинг MPA")
+    private MpaRating mpa;
     @JsonIgnore
     private int countUserlikes;
     @Positive(message = "ID должен быть положительным целым числом")

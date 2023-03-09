@@ -10,11 +10,11 @@ import org.springframework.validation.BindingResult;
 import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -50,29 +50,44 @@ public class UserService extends ServiceRequestable<User> {
     public List<User> getFriendsById(Integer id) {
         log.debug("/getFriendsById");
         isExist(id);
-        return storage.getFriends(id);
+//        return storage.getFriends(id);
 //        return storage.getById(id).getFriends().stream().map(storage::getById).collect(Collectors.toList());
-//        List<User> friends = storage.getFriends(id);
-//        friends.forEach(this::reCheckFriends);
-//        return friends;
+        List<User> friends = storage.getFriendsAsUser(id); // получил список юзеров с пустым полем друзья
+        friends.forEach(this::collectFriends);
+        return friends;
+
+    }
+
+    private void collectFriends(User user) {
+        List<Friend> friendsIds = storage.getFriendsAsFriend(user.getId());
+        friendsIds.forEach(friend -> {
+            Boolean status = storage.getStatusFriendShip(user.getId(), friend.getId());
+            friend.setStatusFriendship(status);
+        });
+        user.setFriends(friendsIds);
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
         log.debug("/getCommonFriends");
         isExist(id);
         isExist(otherId);
-        List<User> idFriends = storage.getFriends(id);
-        List<User> otherIdFriends = storage.getFriends(otherId);
+        List<User> idFriends = storage.getFriendsAsUser(id);
+        List<User> otherIdFriends = storage.getFriendsAsUser(otherId);
         log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
-        return idFriends.stream()
+        List<User> commonFriends = idFriends.stream()
                 .filter(otherIdFriends::contains)
                 .collect(Collectors.toCollection(ArrayList::new));
+        commonFriends.forEach(this::collectFriends);
+        return commonFriends;
     }
 
     @Override
     public List<User> getAll() {
         log.debug("/getAll");
-        return storage.getAll();
+//        return storage.getAll();
+        List<User> backedUsers = storage.getAll();
+        backedUsers.forEach(this::collectFriends);
+        return backedUsers;
     }
 
     @Override
@@ -89,25 +104,23 @@ public class UserService extends ServiceRequestable<User> {
         annotationValidate(bindResult);
         customValidate(user);
         isExist(user.getId());
-        return storage.update(user);
-//        user = storage.update(user);
-//        reCheckFriends(user);
-//        return user;
+//        return storage.update(user);
+        User backedUser = storage.update(user);
+        collectFriends(backedUser);
+        return backedUser;
     }
 
-//    private void reCheckFriends(User user) {
-//        user.setFriends(storage.getFriends(user.getId()));
-//    }
+
 
 
     @Override
     public User getById(Integer id) { //todo создать индекс
         log.debug("/getById");
         isExist(id);
-        return storage.getById(id);
-//        User backedUser = storage.getById(id);
-//        reCheckFriends(backedUser);
-//        return backedUser;
+//        return storage.getById(id);
+        User backedUser = storage.getById(id);
+        collectFriends(backedUser);
+        return backedUser;
     }
 
     @Override
