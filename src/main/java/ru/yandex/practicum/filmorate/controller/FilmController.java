@@ -28,7 +28,7 @@ public class FilmController extends ControllerRequestable<Film> {
     }
 
     @Override
-    @GetMapping
+    @GetMapping("/films")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getAll() {
         log.debug("/getAll");

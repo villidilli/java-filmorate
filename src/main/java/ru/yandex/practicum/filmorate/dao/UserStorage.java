@@ -70,15 +70,8 @@ public class UserStorage {
 	}
 
 	public Boolean getStatusFriendShip(Integer id, Integer id2) {
-		List<Integer> mutualFriends = jdbcTemplate.queryForList("" +
-				"SELECT id_user AS mutual_friendship\n" +
-				"FROM USER_FRIEND uf\n" +
-				"WHERE id_user IN (\n" +
-				"SELECT id_friend\n" +
-				"FROM user_friend uf2\n" +
-				"WHERE uf2.id_user=?\n" +
-				") AND uf.id_friend = ?", Integer.class,  id, id);
-		return mutualFriends.contains(id2);
+		List<Integer> commonFriends = jdbcTemplate.queryForList(COMMON_FRIENDS_USERS.query, Integer.class,  id, id);
+		return commonFriends.contains(id2);
 	}
 
 	public void deleteFriend(Integer id, Integer friendId) {

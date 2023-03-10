@@ -11,11 +11,13 @@ import ru.yandex.practicum.filmorate.dao.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.util.GenreIdComparator;
 
 import java.time.LocalDate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
@@ -28,15 +30,15 @@ public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     public static final String PRIORITY_STORAGE = "InMemoryFilmStorage";
     private final UserService userService;
-//    private final Comparator<Film> popularDescComparator;
     private final FilmStorage storage;
+    private final Comparator<Film> sortFilmByRate;
 
     @Autowired
     public FilmService(FilmStorage storage,
                        UserService userService) {
         this.storage = storage;
         this.userService = userService;
-//        popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();
+        sortFilmByRate = Comparator.comparing(Film::getRate).reversed();
     }
 
     public void addLike(Integer filmId, Integer userId) {
@@ -55,11 +57,13 @@ public class FilmService extends ServiceRequestable<Film> {
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
-//        log.debug("/getPopularFilm");
+        log.debug("/getPopularFilm");
+        List<Film> films = getAllFilms();
+        films.sort(sortFilmByRate);
+        return films.stream().limit(countFilms).collect(Collectors.toList());
 //        List<Film> films = sortFilms(popularDescComparator);
 //        log.debug(LOG_POPULAR_FILMS.message, countFilms, films);
 //        return films.stream().limit(countFilms).collect(Collectors.toList());
-        return null;
     }
 
     @Override

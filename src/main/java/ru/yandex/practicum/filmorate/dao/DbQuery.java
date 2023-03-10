@@ -12,6 +12,8 @@ public enum DbQuery {
     USER_ADD("INSERT INTO users (login, name, email, birthday VALUES (?,?,?,?)"),
     USER_GET_ALL("SELECT * FROM users"),
     FILM_GET_ALL("SELECT * FROM films"),
+    COMMON_FRIENDS_USERS("SELECT id_user AS mutual_friendship FROM USER_FRIEND WHERE id_user IN " +
+            "(SELECT id_friend FROM user_friend uf2 WHERE uf2.id_user=?) AND uf.id_friend = ?"),
     USER_GET_BY_ID("SELECT * FROM users WHERE id_user=?"),
     FILM_GET_BY_ID("SELECT * FROM films WHERE id_film=?"),
     USER_UPDATE("UPDATE users SET login=?, name=?, email=?, birthday=? WHERE id_user=?"),
