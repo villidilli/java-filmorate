@@ -32,7 +32,7 @@ public class UserController extends ControllerRequestable<User> {
     @ResponseStatus(value = HttpStatus.OK)
     public List<User> getAll() {
         log.debug("/getAll");
-        return service.getAll();
+        return service.getAllFilms();
     }
 
     @GetMapping("/{id}/friends")

@@ -11,11 +11,11 @@ import ru.yandex.practicum.filmorate.dao.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.util.GenreIdComparator;
 
 import java.time.LocalDate;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
@@ -63,9 +63,15 @@ public class FilmService extends ServiceRequestable<Film> {
     }
 
     @Override
-    public List<Film> getAll() {
+    public List<Film> getAllFilms() {
         log.debug("/getAll");
-        return storage.getAll();
+        List<Film> films = storage.getAllFilms();
+        for (Film film : films) {
+            film.setMpa(storage.getMpaById(film.getMpa().getId()));
+            film.setGenres(storage.getFilmGenres(film.getId()));
+            film.setRate(storage.getRateByFilmId(film.getId()));
+        }
+        return films;
     }
 
     @Override
@@ -73,7 +79,12 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug("/create");
         customValidate(film);
         annotationValidate(bindResult);
-        return storage.add(film);
+        film.setId(storage.addFilmAndReturnId(film));
+        film.setMpa(storage.getMpaById(film.getMpa().getId()));
+        film.setGenres(storage.getGenresWithNameOnCreate(film));
+        film.setRate(storage.getRateByFilmId(film.getId()));
+        storage.addFilmGenres(film);
+        return film;
     }
 
     @Override
@@ -82,14 +93,21 @@ public class FilmService extends ServiceRequestable<Film> {
         annotationValidate(bindResult);
         customValidate(film);
         isExist(film.getId());
-        return storage.update(film);
+        storage.updateFilms(film);
+        storage.deleteFilmGenre(film);
+        storage.addFilmGenres(film);
+        return getById(film.getId());
     }
 
     @Override
-    public Film getById(Integer id) {
+    public Film getById(Integer filmId) {
         log.debug("/getById");
-        isExist(id);
-        return storage.getById(id);
+        isExist(filmId);
+        Film film = storage.getFilmById(filmId);
+        film.setGenres(storage.getFilmGenres(filmId));
+        film.setMpa(storage.getMpaById(film.getMpa().getId()));
+        film.setRate(storage.getRateByFilmId(filmId));
+        return film;
     }
 
     @Override
@@ -102,13 +120,13 @@ public class FilmService extends ServiceRequestable<Film> {
     @Override
     protected void isExist(Integer id) {
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
+        if (storage.getFilmById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message, id);
     }
 
-    private List<Film> sortFilms(Comparator<Film> comparator) {
-        List<Film> list = storage.getAll();
-        list.sort(comparator);
-        return list;
-    }
+//    private List<Film> sortFilms(Comparator<Film> comparator) {
+//        List<Film> list = storage.getAllFilms();
+//        list.sort(comparator);
+//        return list;
+//    }
 }

@@ -16,7 +16,7 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 public abstract class ServiceRequestable<T extends Requestable> {
 //    protected RequestableStorage<T> storage;
 
-    public abstract List<T> getAll();
+    public abstract List<T> getAllFilms();
 //    {
 //        log.debug("/getAll");
 //        return storage.getAll();

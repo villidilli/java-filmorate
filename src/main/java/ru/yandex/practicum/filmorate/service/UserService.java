@@ -82,7 +82,7 @@ public class UserService extends ServiceRequestable<User> {
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAllFilms() {
         log.debug("/getAll");
 //        return storage.getAll();
         List<User> backedUsers = storage.getAll();

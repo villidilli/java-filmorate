@@ -32,7 +32,7 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getAll() {
         log.debug("/getAll");
-        return filmService.getAll();
+        return filmService.getAllFilms();
     }
 
     @GetMapping("/{id}")

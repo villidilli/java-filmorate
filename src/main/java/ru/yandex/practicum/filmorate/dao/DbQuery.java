@@ -25,6 +25,8 @@ public enum DbQuery {
     FILM_GENRE_SAVE("INSERT INTO film_genre (id_film, id_genre) VALUES (?,?)"),
     FILM_LIKE_SAVE("INSERT INTO film_like (id_film, id_user) VALUES (?,?)"),
     RATE_GET_BY_FILM_ID("SELECT COUNT(DISTINCT id_user) FROM film_like WHERE id_film = ?"),
+    FILM_UPDATE_FILMS("UPDATE films SET name=?, description=?, release_date=?, duration=?, id_mpa=?"),
+    FILM_GENRE_DELETE_BY_FILM_ID("DELETE FROM film_genre WHERE id_film=?"),
     FILM_UPDATE_ID_MPA("UPDATE films SET id_mpa=? WHERE id_film=?");
 
     final String query;

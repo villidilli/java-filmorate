@@ -30,5 +30,6 @@ public class Film extends Requestable {
     private Mpa mpa = new Mpa();
     //    @NotBlank(message = "Необходимо указать минимум один id жанра")
     private List<Genre> genres = new ArrayList<>();
-    private int rate;
+    @JsonIgnore
+    private Integer rate; // todo может int ???
 }
