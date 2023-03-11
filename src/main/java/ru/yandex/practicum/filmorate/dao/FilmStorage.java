@@ -1,12 +1,10 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,8 +12,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.util.*;
 
-import javax.sql.RowSet;
-import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,10 +33,8 @@ public class FilmStorage {
     }
 
     public List<Film> getAllFilms() {
-        log.debug("/getAll");
-        List<Film> f = jdbcTemplate.query(FILM_GET_ALL.query, new FilmMapper());
-        log.debug("УДАЛИТЬ !!!!!!!!! " + f.toString());
-        return f;
+        log.debug("/getAllFilms");
+        return jdbcTemplate.query(FILM_GET_ALL.query, new FilmMapper());
     }
 
     public void updateFilms(Film film) {
@@ -50,30 +44,30 @@ public class FilmStorage {
                             film.getDescription(),
                             film.getReleaseDate(),
                             film.getDuration(),
-                            film.getMpa().getId(), film.getId());
+                            film.getMpa().getId(),
+                            film.getId());
     }
 
     public void deleteFilmGenre(Film film) {
         log.debug("/deleteFilmGenre");
         jdbcTemplate.update(FILM_GENRE_DELETE_BY_FILM_ID.query, film.getId());
-        log.debug(jdbcTemplate.queryForList("SELECT * FROM film_genre").toString());
     }
 
     public Film getFilmById(Integer filmId) { //todo сделать исключения при null
         log.debug("/getFilmByID");
-        Film f = jdbcTemplate.query(FILM_GET_BY_ID.query, new FilmMapper(), filmId).stream()
-                        .findAny().orElse(null);
-        return f;
+        return jdbcTemplate.query(FILM_GET_BY_ID.query, new FilmMapper(), filmId).stream()
+                .findAny()
+                .orElse(null);
     }
 
     public void addLike(Integer filmId, Integer userId) {
         log.debug("/addLike");
-        jdbcTemplate.update(FILM_LIKE_SAVE.query, filmId, userId);
+        jdbcTemplate.update(LIKE_ADD.query, filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
-        jdbcTemplate.update("DELETE FROM film_like WHERE id_film = ? AND id_user = ?", filmId, userId);
+        jdbcTemplate.update(LIKE_DELETE.query, filmId, userId);
     }
 
     public Integer getRateByFilmId(Integer filmId) {
@@ -82,10 +76,12 @@ public class FilmStorage {
     }
 
     public List<Genre> getFilmGenres(Integer filmId) {
+        log.debug("/getFilmGenres");
         return jdbcTemplate.query(GENRES_GET_BY_FILM_ID.query, new GenreMapper(), filmId);
     }
 
     private Map<String, Object> convertFilmToRow(Film film) {
+        log.debug("/convertFilmToRow");
         Map<String, Object> param = new HashMap<>();
         param.put("name", film.getName());
         param.put("description", film.getDescription());
@@ -101,7 +97,7 @@ public class FilmStorage {
     }
 
     public List<Genre> getGenresWithNameOnCreate(Film film) {
-        log.debug("/getGenresWithName");
+        log.debug("/getGenresWithNameOnCreate");
         return film.getGenres().stream()
                 .map(Genre::getId)
                 .map(this::getGenreById)
@@ -117,6 +113,7 @@ public class FilmStorage {
     }
 
     public Genre getGenreById(Integer genreId) {
+        log.debug("/getGenreById");
         try {
             return jdbcTemplate.queryForObject(GENRE_GET_BY_ID.query, new GenreMapper(), genreId);
         } catch (EmptyResultDataAccessException e) {

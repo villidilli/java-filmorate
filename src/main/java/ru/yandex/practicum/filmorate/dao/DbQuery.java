@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.dao;
 
-import lombok.Getter;
-
 
 public enum DbQuery {
     USERS_TABLE("users"),
@@ -28,10 +26,11 @@ public enum DbQuery {
     GENRES_GET_BY_FILM_ID("SELECT * FROM genres WHERE id_genre IN " +
                             "(SELECT id_genre FROM film_genre WHERE id_film = ?) ORDER BY id_genre"),
     FILM_GENRE_SAVE("INSERT INTO film_genre (id_film, id_genre) VALUES (?,?)"),
-    FILM_LIKE_SAVE("INSERT INTO film_like (id_film, id_user) VALUES (?,?)"),
+    LIKE_ADD("INSERT INTO film_like (id_film, id_user) VALUES (?,?)"),
     RATE_GET_BY_FILM_ID("SELECT COUNT(DISTINCT id_user) FROM film_like WHERE id_film = ?"),
     FILM_UPDATE_FILMS("UPDATE films SET name=?, description=?, release_date=?, duration=?, id_mpa=? WHERE id_film=?"),
     FILM_GENRE_DELETE_BY_FILM_ID("DELETE FROM FILM_GENRE WHERE ID_FILM = ?"),
+    LIKE_DELETE("DELETE FROM film_like WHERE id_film = ? AND id_user = ?"),
     FILM_UPDATE_ID_MPA("UPDATE films SET id_mpa=? WHERE id_film=?");
 
     final String query;

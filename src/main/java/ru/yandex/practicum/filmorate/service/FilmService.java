@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.util.GenreIdComparator;
 
 import java.time.LocalDate;
 
@@ -29,7 +28,6 @@ import static ru.yandex.practicum.filmorate.util.Message.*;
 @Slf4j
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
-    public static final String PRIORITY_STORAGE = "InMemoryFilmStorage";
     private final UserService userService;
     private final FilmStorage storage;
     private final Comparator<Film> sortFilmByRate;
@@ -54,24 +52,19 @@ public class FilmService extends ServiceRequestable<Film> {
         isExist(filmId);
         userService.isExist(userId);
         storage.deleteLike(filmId, userId);
-//        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
         log.debug("/getPopularFilm");
-        List<Film> films = getAllFilms();
+        List<Film> films = getAll();
         films.sort(sortFilmByRate);
         return films.stream().limit(countFilms).collect(Collectors.toList());
-//        List<Film> films = sortFilms(popularDescComparator);
-//        log.debug(LOG_POPULAR_FILMS.message, countFilms, films);
-//        return films.stream().limit(countFilms).collect(Collectors.toList());
     }
 
     @Override
-    public List<Film> getAllFilms() {
-        log.debug("/getAll");
+    public List<Film> getAll() {
+        log.debug("/getAll(Films)");
         List<Film> films = storage.getAllFilms();
-        log.debug("УДАЛИТЬ !!!!!!! " + films.toString());
         for (Film film : films) {
             film.setMpa(storage.getMpaById(film.getMpa().getId()));
             film.setGenres(storage.getFilmGenres(film.getId()));
@@ -82,7 +75,7 @@ public class FilmService extends ServiceRequestable<Film> {
 
     @Override
     public Film create(Film film, BindingResult bindResult) {
-        log.debug("/create");
+        log.debug("/create(Film)");
         customValidate(film);
         annotationValidate(bindResult);
         film.setId(storage.addFilmAndReturnId(film));
@@ -95,22 +88,19 @@ public class FilmService extends ServiceRequestable<Film> {
 
     @Override
     public Film update(Film film, BindingResult bindResult) {
-        log.debug("/update");
+        log.debug("/update(Film)");
         annotationValidate(bindResult);
         customValidate(film);
         isExist(film.getId());
         storage.deleteFilmGenre(film);
         storage.updateFilms(film);
         storage.addFilmGenres(film);
-
-        Film film1 = getById(film.getId());
-        log.debug("ВЕРНУЛОСЬ ПО ИТОГУ В КОНЦЕ АПДЕЙТ " + film1.toString());
-        return film1;
+        return getById(film.getId());
     }
 
     @Override
     public Film getById(Integer filmId) {
-        log.debug("/getById");
+        log.debug("/getById(Film)");
         isExist(filmId);
         Film film = storage.getFilmById(filmId);
         film.setGenres(storage.getFilmGenres(filmId));
@@ -121,33 +111,36 @@ public class FilmService extends ServiceRequestable<Film> {
 
     @Override
     protected void customValidate(Film film) throws ValidateException {
+        log.debug("customValidate");
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
             throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
-        log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
     }
 
     @Override
     protected void isExist(Integer id) {
-        log.debug("/isExist");
+        log.debug("/isExist(Film)");
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (storage.getFilmById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
-        log.debug(LOG_IS_EXIST_SUCCESS.message, id);
     }
 
     public List<Mpa> getAllMpa() {
+        log.debug("/getAllMpa");
         return storage.getAllMpa();
     }
 
     public Mpa getMpaById(Integer mpaId) {
+        log.debug("/getMpaById");
         if (mpaId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         return storage.getMpaById(mpaId);
     }
 
     public List<Genre> getAllGenres() {
+        log.debug("/getAllGenres");
         return storage.getAllGenres();
     }
 
     public Genre getGenreById(Integer genreId) {
+        log.debug("/getGenreById");
         if (genreId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         return storage.getGenreById(genreId);
     }

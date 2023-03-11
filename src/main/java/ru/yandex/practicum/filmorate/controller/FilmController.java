@@ -33,7 +33,7 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getAll() {
         log.debug("/getAll");
-        return filmService.getAllFilms();
+        return filmService.getAll();
     }
 
     @GetMapping("/films/{id}")
@@ -46,8 +46,8 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getPopularFilms(@RequestParam(value = "count",
                                                     required = false,
-                                                    defaultValue = "10") Integer countFilms) {
-        return filmService.getPopularFilms(countFilms);
+                                                    defaultValue = "10") Integer outputLimit) {
+        return filmService.getPopularFilms(outputLimit);
     }
 
     @Override
@@ -63,7 +63,6 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.OK)
     public Film update(@Valid @RequestBody Film film, BindingResult bindResult) {
         log.debug("/update");
-        log.debug("ПРИШЛО В КОНТРОЛЛЕР " + film.toString());
         return filmService.update(film, bindResult);
     }
 
@@ -71,6 +70,7 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable("id") Integer filmId,
                         @PathVariable Integer userId) {
+        log.debug("/addLike");
         filmService.addLike(filmId, userId);
     }
 
@@ -78,30 +78,35 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable Integer userId) {
+        log.debug("/deleteLike");
         filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/mpa")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Mpa> getAllMpa() {
+        log.debug("/getAllMpa");
         return filmService.getAllMpa();
     }
 
     @GetMapping("/mpa/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Mpa getMpaById(@PathVariable("id") Integer mpaId) {
+        log.debug("/getMpaById");
         return filmService.getMpaById(mpaId);
     }
 
     @GetMapping("/genres")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Genre> getAllGenres() {
+        log.debug("/getAllGenres");
         return filmService.getAllGenres();
     }
 
     @GetMapping("/genres/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Genre getGenreById(@PathVariable("id") Integer genreId) {
+        log.debug("/getGenreById");
         return filmService.getGenreById(genreId);
     }
 }
