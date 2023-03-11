@@ -13,7 +13,7 @@ public enum DbQuery {
     MPA_GET_ALL("SELECT * FROM mpa ORDER BY id_mpa"),
     GENRES_GET_ALL("SELECT * FROM genres ORDER BY id_genre"),
     COMMON_FRIENDS_USERS("SELECT id_user AS mutual_friendship FROM USER_FRIEND WHERE id_user IN " +
-            "(SELECT id_friend FROM user_friend uf2 WHERE uf2.id_user=?) AND uf.id_friend = ?"),
+            "(SELECT id_friend FROM user_friend uf2 WHERE uf2.id_user=?) AND id_friend = ?"),
     USER_GET_BY_ID("SELECT * FROM users WHERE id_user=?"),
     FILM_GET_BY_ID("SELECT * FROM films WHERE id_film=?"),
     USER_UPDATE("UPDATE users SET login=?, name=?, email=?, birthday=? WHERE id_user=?"),

@@ -104,8 +104,8 @@ public class FilmStorage {
         }
     }
 
-    public void updateFilms(Film film) {
-        log.debug("/updateFilms");
+    public void updateFilm(Film film) {
+        log.debug("/updateFilm");
         jdbcTemplate.update(FILM_UPDATE_FILMS.query,
                             film.getName(),
                             film.getDescription(),

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.RELEASE_DATE_INVALID;
-import static ru.yandex.practicum.filmorate.util.Message.*;
 
 @Service
 @Slf4j
@@ -74,6 +73,17 @@ public class FilmService extends ServiceRequestable<Film> {
     }
 
     @Override
+    public Film getById(Integer filmId) {
+        log.debug("/getById(Film)");
+        isExist(filmId);
+        Film film = storage.getFilmById(filmId);
+        film.setGenres(storage.getFilmGenres(filmId));
+        film.setMpa(storage.getMpaById(film.getMpa().getId()));
+        film.setRate(storage.getRateByFilmId(filmId));
+        return film;
+    }
+
+    @Override
     public Film create(Film film, BindingResult bindResult) {
         log.debug("/create(Film)");
         customValidate(film);
@@ -93,34 +103,9 @@ public class FilmService extends ServiceRequestable<Film> {
         customValidate(film);
         isExist(film.getId());
         storage.deleteFilmGenre(film);
-        storage.updateFilms(film);
+        storage.updateFilm(film);
         storage.addFilmGenres(film);
         return getById(film.getId());
-    }
-
-    @Override
-    public Film getById(Integer filmId) {
-        log.debug("/getById(Film)");
-        isExist(filmId);
-        Film film = storage.getFilmById(filmId);
-        film.setGenres(storage.getFilmGenres(filmId));
-        film.setMpa(storage.getMpaById(film.getMpa().getId()));
-        film.setRate(storage.getRateByFilmId(filmId));
-        return film;
-    }
-
-    @Override
-    protected void customValidate(Film film) throws ValidateException {
-        log.debug("customValidate");
-        if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
-            throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
-    }
-
-    @Override
-    protected void isExist(Integer id) {
-        log.debug("/isExist(Film)");
-        if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        if (storage.getFilmById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 
     public List<Mpa> getAllMpa() {
@@ -143,5 +128,20 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug("/getGenreById");
         if (genreId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         return storage.getGenreById(genreId);
+    }
+
+
+    @Override
+    protected void customValidate(Film film) throws ValidateException {
+        log.debug("customValidate(film)");
+        if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
+            throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
+    }
+
+    @Override
+    protected void isExist(Integer id) {
+        log.debug("/isExist(Film)");
+        if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
+        if (storage.getFilmById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 }

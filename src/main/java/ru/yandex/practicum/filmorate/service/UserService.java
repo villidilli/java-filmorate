@@ -13,9 +13,7 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
@@ -47,93 +45,90 @@ public class UserService extends ServiceRequestable<User> {
         storage.deleteFriend(id, friendId);
     }
 
-    public List<User> getFriendsById(Integer id) {
-        log.debug("/getFriendsById");
-        isExist(id);
-//        return storage.getFriends(id);
-//        return storage.getById(id).getFriends().stream().map(storage::getById).collect(Collectors.toList());
-        List<User> friends = storage.getFriendsAsUser(id); // получил список юзеров с пустым полем друзья
-        friends.forEach(this::collectFriends);
-        return friends;
-
+    @Override
+    public List<User> getAll() { //ref
+        log.debug("/getAll(user)");
+        List<User> users = storage.getAllUsers();
+        users.forEach(user -> user.setFriends(getUserFriends(user)));
+        return users;
     }
 
-    private void collectFriends(User user) {
-        List<Friend> friendsIds = storage.getFriendsAsFriend(user.getId());
-        friendsIds.forEach(friend -> {
-            Boolean status = storage.getStatusFriendShip(user.getId(), friend.getId());
+    @Override
+    public User getById(Integer userId) { //ref
+        log.debug("/getById(user)");
+        isExist(userId);
+        User user = storage.getById(userId);
+        user.setFriends(getUserFriends(user));
+        return user;
+    }
+
+    public List<User> getFriendsById(Integer userId) { //ref
+        log.debug("/getFriendsById");
+        isExist(userId);
+        List<User> friends = storage.getFriendsAsUser(userId); // получил список юзеров с пустым полем друзья
+        friends.forEach(friend -> friend.setFriends(getUserFriends(friend)));
+        return friends;
+    }
+
+    private List<Friend> getUserFriends(User user) { //ref
+        log.debug("getUserFriends");
+        List<Friend> friends = storage.getFriendsAsFriend(user.getId());
+        friends.forEach(friend -> {
+            Boolean status = storage.isMutualFriendship(user.getId(), friend.getId());
             friend.setStatusFriendship(status);
         });
-        user.setFriends(friendsIds);
+        return friends;
     }
 
-    public List<User> getCommonFriends(Integer id, Integer otherId) {
+    public List<User> getCommonFriends(Integer user1Id, Integer user2Id) { //ref
         log.debug("/getCommonFriends");
-        isExist(id);
-        isExist(otherId);
-        List<User> idFriends = storage.getFriendsAsUser(id);
-        List<User> otherIdFriends = storage.getFriendsAsUser(otherId);
-        log.debug(LOG_COMMON_FRIENDS.message, id, otherId, idFriends);
+        log.debug("income user1-id / user2-id: [" + user1Id + "/" + user2Id + "]");
+        isExist(user1Id);
+        isExist(user2Id);
+        List<User> idFriends = storage.getFriendsAsUser(user1Id);
+        List<User> otherIdFriends = storage.getFriendsAsUser(user2Id);
+        log.debug(LOG_COMMON_FRIENDS.message, user1Id, user2Id, idFriends);
         List<User> commonFriends = idFriends.stream()
                 .filter(otherIdFriends::contains)
-                .collect(Collectors.toCollection(ArrayList::new));
-        commonFriends.forEach(this::collectFriends);
+                .collect(Collectors.toList());
+        commonFriends.forEach(user -> user.setFriends(getUserFriends(user)));
         return commonFriends;
     }
 
     @Override
-    public List<User> getAll() {
-        log.debug("/getAll");
-//        return storage.getAll();
-        List<User> backedUsers = storage.getAll();
-        backedUsers.forEach(this::collectFriends);
-        return backedUsers;
-    }
-
-    @Override
-    public User create(User user, BindingResult bindResult) {
-        log.debug("/create");
+    public User create(User user, BindingResult bindResult) { //ref
+        log.debug("/create(user)");
+        log.debug("income user: " + user.toString());
         customValidate(user);
         annotationValidate(bindResult);
-        return storage.add(user);
+        user.setId(storage.addUserAndReturnId(user));
+        return user;
     }
 
     @Override
-    public User update(User user, BindingResult bindResult) {
-        log.debug("/update");
+    public User update(User user, BindingResult bindResult) { //ref
+        log.debug("/update(user)");
+        log.debug("income user: " + user.toString());
         annotationValidate(bindResult);
         customValidate(user);
         isExist(user.getId());
-//        return storage.update(user);
-        User backedUser = storage.update(user);
-        collectFriends(backedUser);
-        return backedUser;
-    }
-
-
-
-
-    @Override
-    public User getById(Integer id) { //todo создать индекс
-        log.debug("/getById");
-        isExist(id);
-//        return storage.getById(id);
-        User backedUser = storage.getById(id);
-        collectFriends(backedUser);
-        return backedUser;
+        storage.updateUser(user);
+        return getById(user.getId());
     }
 
     @Override
-    protected void customValidate(User user) throws ValidateException {
+    protected void customValidate(User user) throws ValidateException { //ref
+        log.debug("customValidate(user)");
+        log.debug("income user: " + user.toString());
         if (user.getLogin().contains(" ")) throw new ValidateException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
         if (user.getName() == null || user.getName().isEmpty()) user.setName(user.getLogin());
-        log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
     }
 
     @Override
-    protected void isExist(Integer id) {
+    protected void isExist(Integer id) { //ref
+        log.debug("/isExist(user)");
+        log.debug("income id: " + id);
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
-        log.debug(LOG_IS_EXIST_SUCCESS.message, id);
     }
 }
