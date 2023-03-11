@@ -37,23 +37,6 @@ public class FilmStorage {
                 .usingGeneratedKeyColumns(FILM_ID.query);
     }
 
-    public void addLike(Integer filmId, Integer userId) {
-        log.debug("/addLike");
-        jdbcTemplate.update(LIKE_ADD.query, filmId, userId);
-    }
-
-    public int addFilmAndReturnId(Film film) {
-        log.debug("/addFilmAndReturnId");
-        return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
-    }
-
-    public void addFilmGenres(Film film) { //todo пакетное обновление
-        log.debug("/addFIlmGenres");
-        new ArrayList<>(new HashSet<>(film.getGenres())).stream()
-                .map(Genre::getId)
-                .forEach(genreId -> jdbcTemplate.update(FILM_GENRE_SAVE.query, film.getId(), genreId));
-    }
-
     public List<Film> getAllFilms() {
         log.debug("/getAllFilms");
         return jdbcTemplate.query(FILM_GET_ALL.query, new FilmMapper());
@@ -140,6 +123,23 @@ public class FilmStorage {
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
         jdbcTemplate.update(LIKE_DELETE.query, filmId, userId);
+    }
+
+    public void addLike(Integer filmId, Integer userId) {
+        log.debug("/addLike");
+        jdbcTemplate.update(LIKE_ADD.query, filmId, userId);
+    }
+
+    public int addFilmAndReturnId(Film film) {
+        log.debug("/addFilmAndReturnId");
+        return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
+    }
+
+    public void addFilmGenres(Film film) { //todo пакетное обновление
+        log.debug("/addFIlmGenres");
+        new ArrayList<>(new HashSet<>(film.getGenres())).stream()
+                .map(Genre::getId)
+                .forEach(genreId -> jdbcTemplate.update(FILM_GENRE_SAVE.query, film.getId(), genreId));
     }
 
     private Map<String, Object> convertFilmToRow(Film film) {
