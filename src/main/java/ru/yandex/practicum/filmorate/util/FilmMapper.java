@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.util;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.jdbc.core.RowMapper;
+
 import ru.yandex.practicum.filmorate.exception.MapperException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
