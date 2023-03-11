@@ -31,5 +31,5 @@ public class Film extends Requestable {
     //    @NotBlank(message = "Необходимо указать минимум один id жанра")
     private List<Genre> genres = new ArrayList<>();
     @JsonIgnore
-    private Integer rate; // todo может int ???
+    private Integer rate;
 }

@@ -62,7 +62,7 @@ public class FilmStorage implements RequestableStorage<Film>{
     }
 
     @Override
-    public Film getById(Integer filmId) { //todo сделать исключения при null
+    public Film getById(Integer filmId) {
         log.debug("/getFilmByID");
         return jdbcTemplate.query(FILM_GET_BY_ID.query, new FilmMapper(), filmId).stream()
                 .findAny()
@@ -139,7 +139,7 @@ public class FilmStorage implements RequestableStorage<Film>{
         jdbcTemplate.update(LIKE_ADD.query, filmId, userId);
     }
 
-    public void addFilmGenres(Film film) { //todo пакетное обновление
+    public void addFilmGenres(Film film) {
         log.debug("/addFIlmGenres");
         new ArrayList<>(new HashSet<>(film.getGenres())).stream()
                 .map(Genre::getId)
