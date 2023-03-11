@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.yandex.practicum.filmorate.dao.DbQuery.COMMON_FRIENDS_USERS;
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.LOGIN_NOT_HAVE_SPACE;
@@ -74,7 +75,7 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("getUserFriends");
         List<Friend> friends = storage.getFriendsAsFriend(user.getId());
         friends.forEach(friend -> {
-            Boolean status = storage.isMutualFriendship(user.getId(), friend.getId());
+            Boolean status = getStatusFriendship(user.getId(), friend.getId());
             friend.setStatusFriendship(status);
         });
         return friends;
@@ -93,6 +94,13 @@ public class UserService extends ServiceRequestable<User> {
                 .collect(Collectors.toList());
         commonFriends.forEach(user -> user.setFriends(getUserFriends(user)));
         return commonFriends;
+    }
+
+    public Boolean getStatusFriendship(Integer userId, Integer checkedUserId) {
+        log.debug("getStatusFriendship");
+        log.debug("income userId / checkedUserId [" + userId + "/" + checkedUserId + "]");
+        List<Integer> userMutualFriends = storage.getMutualFriendsId(userId);
+        return userMutualFriends.contains(checkedUserId);
     }
 
     @Override
