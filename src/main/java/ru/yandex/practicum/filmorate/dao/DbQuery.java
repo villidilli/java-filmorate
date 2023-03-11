@@ -1,13 +1,10 @@
 package ru.yandex.practicum.filmorate.dao;
 
-
 public enum DbQuery {
     USERS_TABLE("users"),
     FILMS_TABLE("films"),
-    USER_FRIEND_TABLE("user_friend"),
     USER_ID("id_user"),
     FILM_ID("id_film"),
-    USER_ADD("INSERT INTO users (login, name, email, birthday VALUES (?,?,?,?)"),
     USER_GET_ALL("SELECT * FROM users"),
     FILM_GET_ALL("SELECT * FROM films ORDER BY id_film"),
     MPA_GET_ALL("SELECT * FROM mpa ORDER BY id_mpa"),
@@ -23,15 +20,14 @@ public enum DbQuery {
     DELETE_FRIEND("DELETE FROM user_friend WHERE id_user=? AND id_friend=?"),
     MPA_GET_BY_ID("SELECT * FROM mpa WHERE id_mpa = ?"),
     GENRE_GET_BY_ID("SELECT * FROM genres WHERE id_genre = ?"),
-    GENRES_GET_BY_FILM_ID("SELECT * FROM genres WHERE id_genre IN " +
-                            "(SELECT id_genre FROM film_genre WHERE id_film = ?) ORDER BY id_genre"),
+    GENRES_GET_BY_FILM_ID(
+        "SELECT * FROM genres WHERE id_genre IN (SELECT id_genre FROM film_genre WHERE id_film = ?) ORDER BY id_genre"),
     FILM_GENRE_SAVE("INSERT INTO film_genre (id_film, id_genre) VALUES (?,?)"),
     LIKE_ADD("INSERT INTO film_like (id_film, id_user) VALUES (?,?)"),
     RATE_GET_BY_FILM_ID("SELECT COUNT(DISTINCT id_user) FROM film_like WHERE id_film = ?"),
     FILM_UPDATE_FILMS("UPDATE films SET name=?, description=?, release_date=?, duration=?, id_mpa=? WHERE id_film=?"),
     FILM_GENRE_DELETE_BY_FILM_ID("DELETE FROM FILM_GENRE WHERE ID_FILM = ?"),
-    LIKE_DELETE("DELETE FROM film_like WHERE id_film = ? AND id_user = ?"),
-    FILM_UPDATE_ID_MPA("UPDATE films SET id_mpa=? WHERE id_film=?");
+    LIKE_DELETE("DELETE FROM film_like WHERE id_film = ? AND id_user = ?");
 
     final String query;
 

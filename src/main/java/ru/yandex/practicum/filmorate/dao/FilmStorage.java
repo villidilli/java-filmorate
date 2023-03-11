@@ -25,7 +25,7 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUN
 
 @Repository
 @Slf4j
-public class FilmStorage {
+public class FilmStorage implements RequestableStorage<Film>{
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -37,12 +37,32 @@ public class FilmStorage {
                 .usingGeneratedKeyColumns(FILM_ID.query);
     }
 
-    public List<Film> getAllFilms() {
+    @Override
+    public int addAndReturnId(Film film) {
+        log.debug("/addFilmAndReturnId");
+        return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
+    }
+
+    @Override
+    public void update(Film film) {
+        log.debug("/updateFilm");
+        jdbcTemplate.update(FILM_UPDATE_FILMS.query,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId());
+    }
+
+    @Override
+    public List<Film> getAll() {
         log.debug("/getAllFilms");
         return jdbcTemplate.query(FILM_GET_ALL.query, new FilmMapper());
     }
 
-    public Film getFilmById(Integer filmId) { //todo сделать исключения при null
+    @Override
+    public Film getById(Integer filmId) { //todo сделать исключения при null
         log.debug("/getFilmByID");
         return jdbcTemplate.query(FILM_GET_BY_ID.query, new FilmMapper(), filmId).stream()
                 .findAny()
@@ -104,17 +124,6 @@ public class FilmStorage {
         }
     }
 
-    public void updateFilm(Film film) {
-        log.debug("/updateFilm");
-        jdbcTemplate.update(FILM_UPDATE_FILMS.query,
-                            film.getName(),
-                            film.getDescription(),
-                            film.getReleaseDate(),
-                            film.getDuration(),
-                            film.getMpa().getId(),
-                            film.getId());
-    }
-
     public void deleteFilmGenre(Film film) {
         log.debug("/deleteFilmGenre");
         jdbcTemplate.update(FILM_GENRE_DELETE_BY_FILM_ID.query, film.getId());
@@ -128,11 +137,6 @@ public class FilmStorage {
     public void addLike(Integer filmId, Integer userId) {
         log.debug("/addLike");
         jdbcTemplate.update(LIKE_ADD.query, filmId, userId);
-    }
-
-    public int addFilmAndReturnId(Film film) {
-        log.debug("/addFilmAndReturnId");
-        return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
     }
 
     public void addFilmGenres(Film film) { //todo пакетное обновление
