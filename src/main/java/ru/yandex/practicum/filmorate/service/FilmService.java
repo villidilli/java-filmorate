@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.util.GenreIdComparator;
 
 import java.time.LocalDate;
@@ -70,6 +71,7 @@ public class FilmService extends ServiceRequestable<Film> {
     public List<Film> getAllFilms() {
         log.debug("/getAll");
         List<Film> films = storage.getAllFilms();
+        log.debug("УДАЛИТЬ !!!!!!! " + films.toString());
         for (Film film : films) {
             film.setMpa(storage.getMpaById(film.getMpa().getId()));
             film.setGenres(storage.getFilmGenres(film.getId()));
@@ -97,10 +99,13 @@ public class FilmService extends ServiceRequestable<Film> {
         annotationValidate(bindResult);
         customValidate(film);
         isExist(film.getId());
-        storage.updateFilms(film);
         storage.deleteFilmGenre(film);
+        storage.updateFilms(film);
         storage.addFilmGenres(film);
-        return getById(film.getId());
+
+        Film film1 = getById(film.getId());
+        log.debug("ВЕРНУЛОСЬ ПО ИТОГУ В КОНЦЕ АПДЕЙТ " + film1.toString());
+        return film1;
     }
 
     @Override
@@ -123,14 +128,27 @@ public class FilmService extends ServiceRequestable<Film> {
 
     @Override
     protected void isExist(Integer id) {
+        log.debug("/isExist");
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (storage.getFilmById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
         log.debug(LOG_IS_EXIST_SUCCESS.message, id);
     }
 
-//    private List<Film> sortFilms(Comparator<Film> comparator) {
-//        List<Film> list = storage.getAllFilms();
-//        list.sort(comparator);
-//        return list;
-//    }
+    public List<Mpa> getAllMpa() {
+        return storage.getAllMpa();
+    }
+
+    public Mpa getMpaById(Integer mpaId) {
+        if (mpaId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
+        return storage.getMpaById(mpaId);
+    }
+
+    public List<Genre> getAllGenres() {
+        return storage.getAllGenres();
+    }
+
+    public Genre getGenreById(Integer genreId) {
+        if (genreId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
+        return storage.getGenreById(genreId);
+    }
 }
