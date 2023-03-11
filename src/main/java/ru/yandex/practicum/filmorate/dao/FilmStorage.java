@@ -32,9 +32,88 @@ public class FilmStorage {
                 .usingGeneratedKeyColumns(FILM_ID.query);
     }
 
+    public void addLike(Integer filmId, Integer userId) {
+        log.debug("/addLike");
+        jdbcTemplate.update(LIKE_ADD.query, filmId, userId);
+    }
+
+    public int addFilmAndReturnId(Film film) {
+        log.debug("/addFilmAndReturnId");
+        return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
+    }
+
+    public void addFilmGenres(Film film) { //todo пакетное обновление
+        log.debug("/addFIlmGenres");
+        new ArrayList<>(new HashSet<>(film.getGenres())).stream()
+                .map(Genre::getId)
+                .forEach(genreId -> jdbcTemplate.update(FILM_GENRE_SAVE.query, film.getId(), genreId));
+    }
+
     public List<Film> getAllFilms() {
         log.debug("/getAllFilms");
         return jdbcTemplate.query(FILM_GET_ALL.query, new FilmMapper());
+    }
+
+    public Film getFilmById(Integer filmId) { //todo сделать исключения при null
+        log.debug("/getFilmByID");
+        return jdbcTemplate.query(FILM_GET_BY_ID.query, new FilmMapper(), filmId).stream()
+                .findAny()
+                .orElse(null);
+    }
+
+    public Integer getRateByFilmId(Integer filmId) {
+        log.debug("/getRateByFilmId");
+        return jdbcTemplate.queryForObject(RATE_GET_BY_FILM_ID.query, Integer.class, filmId);
+    }
+
+    public List<Genre> getFilmGenres(Integer filmId) {
+        log.debug("/getFilmGenres");
+        return jdbcTemplate.query(GENRES_GET_BY_FILM_ID.query, new GenreMapper(), filmId);
+    }
+
+    public List<Genre> getGenresWithNameOnCreate(Film film) {
+        log.debug("/getGenresWithNameOnCreate");
+        return film.getGenres().stream()
+                .map(Genre::getId)
+                .map(this::getGenreById)
+                .sorted(new GenreIdComparator())
+                .collect(Collectors.toList());
+    }
+
+    public List<Genre> getAllGenres() {
+        log.debug("/getAllGenres");
+        try {
+            return jdbcTemplate.query(GENRES_GET_ALL.query, new GenreMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public Genre getGenreById(Integer genreId) {
+        log.debug("/getGenreById");
+        try {
+            return jdbcTemplate.queryForObject(GENRE_GET_BY_ID.query, new GenreMapper(), genreId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("[id: " + genreId + "]" + NOT_FOUND_BY_ID);
+        }
+    }
+
+    public List<Mpa> getAllMpa() {
+        log.debug("/getAllMpa");
+        try {
+            return jdbcTemplate.query(MPA_GET_ALL.query, new MpaMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public Mpa getMpaById(Integer mpaId) throws NotFoundException{
+        log.debug("/getMpaById");
+        try {
+            return jdbcTemplate.queryForObject(MPA_GET_BY_ID.query, new MpaMapper(), mpaId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("[id: " + mpaId + "]" + NOT_FOUND_BY_ID);
+        }
     }
 
     public void updateFilms(Film film) {
@@ -53,31 +132,9 @@ public class FilmStorage {
         jdbcTemplate.update(FILM_GENRE_DELETE_BY_FILM_ID.query, film.getId());
     }
 
-    public Film getFilmById(Integer filmId) { //todo сделать исключения при null
-        log.debug("/getFilmByID");
-        return jdbcTemplate.query(FILM_GET_BY_ID.query, new FilmMapper(), filmId).stream()
-                .findAny()
-                .orElse(null);
-    }
-
-    public void addLike(Integer filmId, Integer userId) {
-        log.debug("/addLike");
-        jdbcTemplate.update(LIKE_ADD.query, filmId, userId);
-    }
-
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
         jdbcTemplate.update(LIKE_DELETE.query, filmId, userId);
-    }
-
-    public Integer getRateByFilmId(Integer filmId) {
-        log.debug("/getRateByFilmId");
-        return jdbcTemplate.queryForObject(RATE_GET_BY_FILM_ID.query, Integer.class, filmId);
-    }
-
-    public List<Genre> getFilmGenres(Integer filmId) {
-        log.debug("/getFilmGenres");
-        return jdbcTemplate.query(GENRES_GET_BY_FILM_ID.query, new GenreMapper(), filmId);
     }
 
     private Map<String, Object> convertFilmToRow(Film film) {
@@ -89,62 +146,5 @@ public class FilmStorage {
         param.put("duration", film.getDuration());
         param.put("id_mpa", film.getMpa().getId());
         return param;
-    }
-
-    public int addFilmAndReturnId(Film film) {
-        log.debug("/addFilmAndReturnId");
-        return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
-    }
-
-    public List<Genre> getGenresWithNameOnCreate(Film film) {
-        log.debug("/getGenresWithNameOnCreate");
-        return film.getGenres().stream()
-                .map(Genre::getId)
-                .map(this::getGenreById)
-                .sorted(new GenreIdComparator())
-                .collect(Collectors.toList());
-    }
-
-    public void addFilmGenres(Film film) { //todo пакетное обновление
-        log.debug("/addFIlmGenres");
-        new ArrayList<>(new HashSet<>(film.getGenres())).stream()
-                .map(Genre::getId)
-                .forEach(genreId -> jdbcTemplate.update(FILM_GENRE_SAVE.query, film.getId(), genreId));
-    }
-
-    public Genre getGenreById(Integer genreId) {
-        log.debug("/getGenreById");
-        try {
-            return jdbcTemplate.queryForObject(GENRE_GET_BY_ID.query, new GenreMapper(), genreId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("[id: " + genreId + "]" + NOT_FOUND_BY_ID);
-        }
-    }
-
-    public Mpa getMpaById(Integer mpaId) throws NotFoundException{
-        log.debug("/getMpaById");
-        try {
-            return jdbcTemplate.queryForObject(MPA_GET_BY_ID.query, new MpaMapper(), mpaId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("[id: " + mpaId + "]" + NOT_FOUND_BY_ID);
-        }
-    }
-
-    public List<Mpa> getAllMpa() {
-        log.debug("/getAllMpa");
-        try {
-            return jdbcTemplate.query(MPA_GET_ALL.query, new MpaMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-
-    public List<Genre> getAllGenres() {
-        log.debug("/getAllGenres");
-        try {
-            return jdbcTemplate.query(GENRES_GET_ALL.query, new GenreMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
     }
 }
