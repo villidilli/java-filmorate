@@ -60,9 +60,7 @@ public class FilmControllerTest {
 		film1.setDescription("История о пароходе");
 		film1.setReleaseDate(LocalDate.of(2000, 1, 1));
 		film1.setDuration(140L);
-		Mpa mpa1 = new Mpa();
-		mpa1.setId(1);
-		film1.setMpa(mpa1);
+		film1.getMpa().setId(1);
 		Genre genre1 = new Genre();
 		genre1.setId(1);
 		Genre genre2 = new Genre();
@@ -74,9 +72,7 @@ public class FilmControllerTest {
 		film2.setDescription("История о любви");
 		film2.setReleaseDate(LocalDate.of(2014, 6, 15));
 		film2.setDuration(90L);
-		Mpa mpa2 = new Mpa();
-		mpa2.setId(2);
-		film1.setMpa(mpa2);
+		film2.getMpa().setId(2);
 		Genre genre3 = new Genre();
 		genre3.setId(3);
 		Genre genre4 = new Genre();
@@ -138,11 +134,10 @@ public class FilmControllerTest {
 	public void getAllFilms() {
 		restTemplate.postForEntity("/films", film1, Film.class);
 		restTemplate.postForEntity("/films", film2, Film.class);
-		ResponseEntity<List<Film>> response = restTemplate.exchange(
-						"/films", HttpMethod.GET, null, listFilmType);
+		ResponseEntity<Film[]> response = restTemplate.getForEntity("/films", Film[].class);
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertTrue(response.hasBody());
-		assertEquals(2, response.getBody().size());
+		assertEquals(2, response.getBody().length);
 
 
 	}
