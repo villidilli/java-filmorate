@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,8 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -73,7 +76,7 @@ public class UserController extends ControllerRequestable<User> {
     @PutMapping("/{id}/friends/{friendId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void addFriend(@PathVariable Integer id,
-                          @PathVariable Integer friendId) {
+                                    @PathVariable Integer friendId) {
         log.debug("/addFriend");
         service.addFriend(id, friendId);
     }

@@ -26,9 +26,7 @@ public class Film extends Requestable {
     private LocalDate releaseDate;
     @Positive (message = "Продолжительность должна быть положительным целым числом")
     private long duration;
-    //    @NotBlank(message = "Необходимо указать рейтинг MPA")
     private Mpa mpa = new Mpa();
-    //    @NotBlank(message = "Необходимо указать минимум один id жанра")
     private List<Genre> genres = new ArrayList<>();
     @JsonIgnore
     private Integer rate;

@@ -52,7 +52,7 @@ public class FilmController extends ControllerRequestable<Film> {
 
     @Override
     @PostMapping("/films")
-    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseStatus(value = HttpStatus.CREATED)
     public Film create(@Valid @RequestBody Film film, BindingResult bindResult) {
         log.debug("/create");
         return filmService.create(film, bindResult);

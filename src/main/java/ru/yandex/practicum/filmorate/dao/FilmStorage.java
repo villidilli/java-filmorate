@@ -115,7 +115,7 @@ public class FilmStorage implements RequestableStorage<Film>{
         }
     }
 
-    public Mpa getMpaById(Integer mpaId) throws NotFoundException{
+    public Mpa getMpaById(Integer mpaId) {
         log.debug("/getMpaById");
         try {
             return jdbcTemplate.queryForObject(MPA_GET_BY_ID.query, new MpaMapper(), mpaId);
