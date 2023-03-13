@@ -67,6 +67,7 @@ public class FilmControllerTest {
 		genre2.setId(2);
 		film1.setGenres(List.of(genre1, genre2));
 
+
 		film2 = new Film();
 		film2.setName("О любви");
 		film2.setDescription("История о любви");
@@ -76,22 +77,20 @@ public class FilmControllerTest {
 		Genre genre3 = new Genre();
 		genre3.setId(3);
 		Genre genre4 = new Genre();
-		genre2.setId(4);
-		film1.setGenres(List.of(genre3, genre4));
+		genre4.setId(4);
+		film2.setGenres(List.of(genre3, genre4));
 
 		film3 = new Film();
 		film3.setName("О войне");
 		film3.setDescription("История о войне");
 		film3.setReleaseDate(LocalDate.of(1980, 12, 31));
 		film3.setDuration(220L);
-		Mpa mpa3 = new Mpa();
-		mpa3.setId(3);
-		film1.setMpa(mpa3);
+		film2.getMpa().setId(3);
 		Genre genre5 = new Genre();
 		genre5.setId(5);
 		Genre genre6 = new Genre();
 		genre6.setId(6);
-		film1.setGenres(List.of(genre5, genre6));
+		film3.setGenres(List.of(genre5, genre6));
 	}
 
 	@AfterEach
@@ -138,7 +137,39 @@ public class FilmControllerTest {
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertTrue(response.hasBody());
 		assertEquals(2, response.getBody().length);
+		Film actFilm1 = response.getBody()[0];
+		Film actFilm2 = response.getBody()[1];
+		assertEquals(film1.getName(), actFilm1.getName());
+		assertEquals(film1.getMpa().getId(), actFilm1.getMpa().getId());
+		assertNotNull(actFilm1.getMpa().getName());
+		assertArrayEquals(film1.getGenres().toArray(), actFilm1.getGenres().toArray());
+		assertEquals(film2.getName(), actFilm2.getName());
+		assertEquals(film2.getMpa().getId(), actFilm2.getMpa().getId());
+		assertNotNull(actFilm2.getMpa().getName());
+		assertArrayEquals(film2.getGenres().toArray(), actFilm2.getGenres().toArray());
+	}
 
+	@Test
+	public void getFilmById1() {
+		restTemplate.postForEntity("/films", film1, Film.class);
+		ResponseEntity<Film> response = restTemplate.getForEntity("/films/1", Film.class);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertTrue(response.hasBody());
+		Film actFilm1 = response.getBody();
+		assertEquals(film1.getName(), actFilm1.getName());
+		assertEquals(film1.getMpa().getId(), actFilm1.getMpa().getId());
+		assertNotNull(actFilm1.getMpa().getName());
+		assertArrayEquals(film1.getGenres().toArray(), actFilm1.getGenres().toArray());
+	}
 
+	@Test
+	public void getFilmById999() {
+		ResponseEntity<ExceptionResponse> response =
+				restTemplate.getForEntity("/films/999", ExceptionResponse.class);
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+		assertTrue(response.hasBody());
+		ExceptionResponse ex = response.getBody();
+		assertTrue(ex.getExceptionClass().contains("NotFoundException"));
+		assertTrue(ex.getExceptionMessage().contains("[id: 999][Объект по ID не найден]"));
 	}
 }
