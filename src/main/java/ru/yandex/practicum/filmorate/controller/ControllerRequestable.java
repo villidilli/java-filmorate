@@ -8,6 +8,8 @@ import java.util.*;
 
 public abstract class ControllerRequestable<T extends Requestable> {
     abstract List<T> getAll();
+
     abstract T create(T obj, BindingResult bindResult);
+
     abstract T update(T obj, BindingResult bindResult);
 }
