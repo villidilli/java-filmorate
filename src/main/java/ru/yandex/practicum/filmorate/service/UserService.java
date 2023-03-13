@@ -2,17 +2,17 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import org.springframework.validation.BindingResult;
 
 import ru.yandex.practicum.filmorate.dao.UserStorage;
+
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
+
 import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -56,7 +56,7 @@ public class UserService extends ServiceRequestable<User> {
     }
 
     @Override
-    public List<User> getAll() { //ref
+    public List<User> getAll() {
         log.debug("/getAll(user)");
         List<User> users = storage.getAll();
         users.forEach(user -> user.setFriends(getUserFriends(user)));

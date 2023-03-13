@@ -45,8 +45,8 @@ public class FilmController extends ControllerRequestable<Film> {
     @GetMapping("/films/popular")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getPopularFilms(@RequestParam(value = "count",
-                                                    required = false,
-                                                    defaultValue = "10") Integer outputLimit) {
+            required = false,
+            defaultValue = "10") Integer outputLimit) {
         return filmService.getPopularFilms(outputLimit);
     }
 

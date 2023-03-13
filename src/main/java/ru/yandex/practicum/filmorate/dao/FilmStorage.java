@@ -12,12 +12,15 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+
 import ru.yandex.practicum.filmorate.util.*;
 
 import java.util.*;
+
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.dao.DbQuery.*;
@@ -25,9 +28,10 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUN
 
 @Repository
 @Slf4j
-public class FilmStorage implements RequestableStorage<Film>{
+public class FilmStorage implements RequestableStorage<Film> {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private Comparator<Genre> sortGenreById;
 
     @Autowired
     public FilmStorage(JdbcTemplate jdbcTemplate) {
@@ -35,6 +39,7 @@ public class FilmStorage implements RequestableStorage<Film>{
         this.jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName(FILMS_TABLE.query)
                 .usingGeneratedKeyColumns(FILM_ID.query);
+        sortGenreById = Comparator.comparing(Genre::getId);
     }
 
     @Override
@@ -84,7 +89,7 @@ public class FilmStorage implements RequestableStorage<Film>{
         return film.getGenres().stream()
                 .map(Genre::getId)
                 .map(this::getGenreById)
-                .sorted(new GenreIdComparator())
+                .sorted(sortGenreById)
                 .collect(Collectors.toList());
     }
 

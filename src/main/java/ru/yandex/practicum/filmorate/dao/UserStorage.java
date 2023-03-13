@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
+
 import ru.yandex.practicum.filmorate.util.FriendMapper;
 import ru.yandex.practicum.filmorate.util.UserMapper;
 
@@ -21,7 +22,7 @@ import static ru.yandex.practicum.filmorate.dao.DbQuery.*;
 
 @Repository
 @Slf4j
-public class UserStorage implements RequestableStorage<User>{
+public class UserStorage implements RequestableStorage<User> {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 

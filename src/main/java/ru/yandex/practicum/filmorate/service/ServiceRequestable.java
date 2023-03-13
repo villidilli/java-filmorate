@@ -10,13 +10,10 @@ import ru.yandex.practicum.filmorate.model.Requestable;
 
 import java.util.List;
 
-import static ru.yandex.practicum.filmorate.util.Message.*;
-
 @Slf4j
 public abstract class ServiceRequestable<T extends Requestable> {
 
     public abstract List<T> getAll();
-
 
     public abstract T create(T t, BindingResult bindResult);
 
