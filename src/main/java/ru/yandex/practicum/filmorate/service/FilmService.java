@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
 
@@ -103,18 +102,6 @@ public class FilmService extends ServiceRequestable<Film> {
         films.sort(sortFilmByRate);
         return films.stream().limit(countFilms).collect(Collectors.toList());
     }
-
-//    public List<Mpa> getAllMpa() { //TODO вынес
-//        log.debug("/getAllMpa");
-//        return storage.getAllMpa();
-//    }
-
-//    public Mpa getMpaById(Integer mpaId) { //TODO вынес
-//        log.debug("/getMpaById");
-//        log.debug("income mpa id: " + mpaId);
-//        if (mpaId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-//        return storage.getMpaById(mpaId);
-//    }
 
     public List<Genre> getAllGenres() {
         log.debug("/getAllGenres");

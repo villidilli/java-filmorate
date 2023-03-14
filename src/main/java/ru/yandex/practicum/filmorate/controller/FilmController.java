@@ -83,20 +83,6 @@ public class FilmController extends ControllerRequestable<Film> {
         filmService.deleteLike(filmId, userId);
     }
 
-//    @GetMapping("/mpa") //TODO вынес
-//    @ResponseStatus(value = HttpStatus.OK)
-//    public List<Mpa> getAllMpa() {
-//        log.debug("/getAllMpa");
-//        return filmService.getAllMpa();
-//    }
-
-//    @GetMapping("/mpa/{id}") //TODO вынес
-//    @ResponseStatus(value = HttpStatus.OK)
-//    public Mpa getMpaById(@PathVariable("id") Integer mpaId) {
-//        log.debug("/getMpaById");
-//        return filmService.getMpaById(mpaId);
-//    }
-
     @GetMapping("/genres")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Genre> getAllGenres() {

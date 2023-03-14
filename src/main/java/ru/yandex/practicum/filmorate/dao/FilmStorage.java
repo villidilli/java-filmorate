@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 
 import ru.yandex.practicum.filmorate.util.*;
 
@@ -111,24 +110,6 @@ public class FilmStorage implements RequestableStorage<Film> {
             throw new NotFoundException("[id: " + genreId + "]" + NOT_FOUND_BY_ID);
         }
     }
-
-//    public List<Mpa> getAllMpa() { //TODO вынес
-//        log.debug("/getAllMpa");
-//        try {
-//            return jdbcTemplate.query(MPA_GET_ALL.query, new MpaMapper());
-//        } catch (EmptyResultDataAccessException e) {
-//            return null;
-//        }
-//    }
-
-//    public Mpa getMpaById(Integer mpaId) { //TODO вынес
-//        log.debug("/getMpaById");
-//        try {
-//            return jdbcTemplate.queryForObject(MPA_GET_BY_ID.query, new MpaMapper(), mpaId);
-//        } catch (EmptyResultDataAccessException e) {
-//            throw new NotFoundException("[id: " + mpaId + "]" + NOT_FOUND_BY_ID);
-//        }
-//    }
 
     public void deleteFilmGenre(Film film) {
         log.debug("/deleteFilmGenre");
