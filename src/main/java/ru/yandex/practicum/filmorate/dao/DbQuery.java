@@ -17,6 +17,7 @@ public enum DbQuery {
     FILM_GET_BY_ID("SELECT * FROM films WHERE id_film=?"),
     USER_UPDATE("UPDATE users SET login=?, name=?, email=?, birthday=? WHERE id_user=?"),
     MPA_UPDATE("UPDATE mpa SET name=? WHERE id_mpa=?"),
+    GENRE_UPDATE("UPDATE genres SET name=? WHERE id_genre=?"),
     ADD_FRIEND("INSERT INTO user_friend (id_user, id_friend) VALUES (?,?)"),
     GET_FRIENDS_AS_USER("SELECT * FROM users WHERE id_user IN (SELECT id_friend FROM user_friend WHERE id_user= ?)"),
     GET_FRIENDS_AS_ID("SELECT id_friend FROM user_friend WHERE id_user=?"),

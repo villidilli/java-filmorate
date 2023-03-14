@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.validation.BindingResult;
 
+import ru.yandex.practicum.filmorate.dao.UserFriendStorage;
 import ru.yandex.practicum.filmorate.dao.UserStorage;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -28,10 +29,12 @@ import static ru.yandex.practicum.filmorate.exception.ValidateException.LOGIN_NO
 @Slf4j
 public class UserService extends ServiceRequestable<User> {
     private final UserStorage storage;
+    private final UserFriendStorage friendStorage;
 
     @Autowired
-    private UserService(UserStorage storage) {
+    private UserService(UserStorage storage, UserFriendStorage friendStorage) {
         this.storage = storage;
+        this.friendStorage = friendStorage;
     }
 
     @Override
@@ -104,14 +107,14 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("/addFriend");
         isExist(id);
         isExist(friendId);
-        storage.addFriend(id, friendId);
+        friendStorage.addFriend(id, friendId);
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
         log.debug("/deleteFriend");
         isExist(id);
         isExist(friendId);
-        storage.deleteFriend(id, friendId);
+        friendStorage.deleteFriend(id, friendId);
     }
 
     @Override
@@ -133,7 +136,7 @@ public class UserService extends ServiceRequestable<User> {
     protected Boolean getStatusFriendship(Integer userId, Integer checkedUserId) {
         log.debug("getStatusFriendship");
         log.debug("income userId / checkedUserId [" + userId + "/" + checkedUserId + "]");
-        List<Integer> userMutualFriends = storage.getMutualFriendsId(userId);
+        List<Integer> userMutualFriends = friendStorage.getMutualFriendsId(userId);
         log.debug("user mutual friendsId: " + userMutualFriends);
         return userMutualFriends.contains(checkedUserId);
     }
@@ -141,7 +144,7 @@ public class UserService extends ServiceRequestable<User> {
     private List<Friend> getUserFriends(User user) {
         log.debug("getUserFriends");
         log.debug("income user: " + user.toString());
-        List<Friend> friends = storage.getFriendsAsFriend(user.getId());
+        List<Friend> friends = friendStorage.getFriendsAsFriend(user.getId());
         log.debug("list user friends :" + friends);
         friends.forEach(friend -> {
             Boolean status = getStatusFriendship(user.getId(), friend.getId());

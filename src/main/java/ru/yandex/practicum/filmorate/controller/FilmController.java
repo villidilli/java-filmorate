@@ -10,8 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -20,6 +18,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequestMapping("/films")
 public class FilmController extends ControllerRequestable<Film> {
     private final FilmService filmService;
 
@@ -29,7 +28,7 @@ public class FilmController extends ControllerRequestable<Film> {
     }
 
     @Override
-    @GetMapping("/films")
+    @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getAll() {
         log.debug("/getAll");
@@ -37,13 +36,13 @@ public class FilmController extends ControllerRequestable<Film> {
     }
 
     @Override
-    @GetMapping("/films/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Film getById(@PathVariable("id") Integer filmId) {
         return filmService.getById(filmId);
     }
 
-    @GetMapping("/films/popular")
+    @GetMapping("/popular")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getPopularFilms(@RequestParam(value = "count",
             required = false,
@@ -52,7 +51,7 @@ public class FilmController extends ControllerRequestable<Film> {
     }
 
     @Override
-    @PostMapping("/films")
+    @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public Film create(@Valid @RequestBody Film film, BindingResult bindResult) {
         log.debug("/create");
@@ -60,14 +59,14 @@ public class FilmController extends ControllerRequestable<Film> {
     }
 
     @Override
-    @PutMapping("/films")
+    @PutMapping
     @ResponseStatus(value = HttpStatus.OK)
     public Film update(@Valid @RequestBody Film film, BindingResult bindResult) {
         log.debug("/update");
         return filmService.update(film, bindResult);
     }
 
-    @PutMapping("/films/{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable("id") Integer filmId,
                         @PathVariable Integer userId) {
@@ -75,25 +74,11 @@ public class FilmController extends ControllerRequestable<Film> {
         filmService.addLike(filmId, userId);
     }
 
-    @DeleteMapping("/films/{id}/like/{userId}")
+    @DeleteMapping("/{id}/like/{userId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable Integer userId) {
         log.debug("/deleteLike");
         filmService.deleteLike(filmId, userId);
-    }
-
-    @GetMapping("/genres")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<Genre> getAllGenres() {
-        log.debug("/getAllGenres");
-        return filmService.getAllGenres();
-    }
-
-    @GetMapping("/genres/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public Genre getGenreById(@PathVariable("id") Integer genreId) {
-        log.debug("/getGenreById");
-        return filmService.getGenreById(genreId);
     }
 }

@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.validation.BindingResult;
 
+import ru.yandex.practicum.filmorate.dao.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.dao.FilmStorage;
 
+import ru.yandex.practicum.filmorate.dao.FilmLikeStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.time.LocalDate;
 
@@ -31,16 +32,25 @@ public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     private final UserService userService;
     private final MpaService mpaService;
+    private final GenreService genreService;
+    private final FilmGenreStorage filmGenreStorage;
     private final FilmStorage storage;
+    private final FilmLikeStorage likeStorage;
     private final Comparator<Film> sortFilmByRate;
 
     @Autowired
     public FilmService(FilmStorage storage,
                        UserService userService,
-                       MpaService mpaService) {
+                       MpaService mpaService,
+                       GenreService genreService,
+                       FilmGenreStorage filmGenreStorage,
+                       FilmLikeStorage filmLikeStorage) {
         this.storage = storage;
         this.userService = userService;
         this.mpaService = mpaService;
+        this.genreService = genreService;
+        this.filmGenreStorage = filmGenreStorage;
+        this.likeStorage = filmLikeStorage;
         sortFilmByRate = Comparator.comparing(Film::getRate).reversed();
     }
 
@@ -52,9 +62,9 @@ public class FilmService extends ServiceRequestable<Film> {
         annotationValidate(bindResult);
         film.setId(storage.addAndReturnId(film));
         film.setMpa(mpaService.getById(film.getMpa().getId()));
-        film.setGenres(storage.getGenresWithNameOnCreate(film));
-        film.setRate(storage.getRateByFilmId(film.getId()));
-        storage.addFilmGenres(film);
+        film.setGenres(genreService.getGenresWithName(film));
+        film.setRate(likeStorage.getRateByFilmId(film.getId()));
+        filmGenreStorage.addFilmGenres(film);
         return film;
     }
 
@@ -65,9 +75,9 @@ public class FilmService extends ServiceRequestable<Film> {
         annotationValidate(bindResult);
         customValidate(film);
         isExist(film.getId());
-        storage.deleteFilmGenre(film);
+        filmGenreStorage.deleteFilmGenre(film);
         storage.update(film);
-        storage.addFilmGenres(film);
+        filmGenreStorage.addFilmGenres(film);
         return getById(film.getId());
     }
 
@@ -77,8 +87,8 @@ public class FilmService extends ServiceRequestable<Film> {
         List<Film> films = storage.getAll();
         for (Film film : films) {
             film.setMpa(mpaService.getById(film.getMpa().getId()));
-            film.setGenres(storage.getFilmGenres(film.getId()));
-            film.setRate(storage.getRateByFilmId(film.getId()));
+            film.setGenres(filmGenreStorage.getFilmGenres(film.getId()));
+            film.setRate(likeStorage.getRateByFilmId(film.getId()));
         }
         return films;
     }
@@ -90,9 +100,9 @@ public class FilmService extends ServiceRequestable<Film> {
         isExist(filmId);
         Film film = storage.getById(filmId);
         log.debug("return from db film: " + film.toString());
-        film.setGenres(storage.getFilmGenres(filmId));
+        film.setGenres(filmGenreStorage.getFilmGenres(filmId));
         film.setMpa(mpaService.getById(film.getMpa().getId()));
-        film.setRate(storage.getRateByFilmId(filmId));
+        film.setRate(likeStorage.getRateByFilmId(filmId));
         return film;
     }
 
@@ -103,30 +113,18 @@ public class FilmService extends ServiceRequestable<Film> {
         return films.stream().limit(countFilms).collect(Collectors.toList());
     }
 
-    public List<Genre> getAllGenres() {
-        log.debug("/getAllGenres");
-        return storage.getAllGenres();
-    }
-
-    public Genre getGenreById(Integer genreId) {
-        log.debug("/getGenreById");
-        log.debug("income genre id: " + genreId);
-        if (genreId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        return storage.getGenreById(genreId);
-    }
-
     public void addLike(Integer filmId, Integer userId) {
         log.debug("/addLike");
         isExist(filmId);
         userService.isExist(userId);
-        storage.addLike(filmId, userId);
+        likeStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
         isExist(filmId);
         userService.isExist(userId);
-        storage.deleteLike(filmId, userId);
+        likeStorage.deleteLike(filmId, userId);
     }
 
     @Override
