@@ -48,6 +48,7 @@ public class UserController extends ControllerRequestable<User> {
         return service.getCommonFriends(id, otherId);
     }
 
+    @Override
     @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public User getById(@PathVariable Integer id) {

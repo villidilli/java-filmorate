@@ -31,14 +31,17 @@ import static ru.yandex.practicum.filmorate.exception.ValidateException.RELEASE_
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
     private final UserService userService;
+    private final MpaService mpaService;
     private final FilmStorage storage;
     private final Comparator<Film> sortFilmByRate;
 
     @Autowired
     public FilmService(FilmStorage storage,
-                       UserService userService) {
+                       UserService userService,
+                       MpaService mpaService) {
         this.storage = storage;
         this.userService = userService;
+        this.mpaService = mpaService;
         sortFilmByRate = Comparator.comparing(Film::getRate).reversed();
     }
 
@@ -49,7 +52,7 @@ public class FilmService extends ServiceRequestable<Film> {
         customValidate(film);
         annotationValidate(bindResult);
         film.setId(storage.addAndReturnId(film));
-        film.setMpa(storage.getMpaById(film.getMpa().getId()));
+        film.setMpa(mpaService.getById(film.getMpa().getId()));
         film.setGenres(storage.getGenresWithNameOnCreate(film));
         film.setRate(storage.getRateByFilmId(film.getId()));
         storage.addFilmGenres(film);
@@ -74,7 +77,7 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug("/getAll(Films)");
         List<Film> films = storage.getAll();
         for (Film film : films) {
-            film.setMpa(storage.getMpaById(film.getMpa().getId()));
+            film.setMpa(mpaService.getById(film.getMpa().getId()));
             film.setGenres(storage.getFilmGenres(film.getId()));
             film.setRate(storage.getRateByFilmId(film.getId()));
         }
@@ -89,7 +92,7 @@ public class FilmService extends ServiceRequestable<Film> {
         Film film = storage.getById(filmId);
         log.debug("return from db film: " + film.toString());
         film.setGenres(storage.getFilmGenres(filmId));
-        film.setMpa(storage.getMpaById(film.getMpa().getId()));
+        film.setMpa(mpaService.getById(film.getMpa().getId()));
         film.setRate(storage.getRateByFilmId(filmId));
         return film;
     }
@@ -101,17 +104,17 @@ public class FilmService extends ServiceRequestable<Film> {
         return films.stream().limit(countFilms).collect(Collectors.toList());
     }
 
-    public List<Mpa> getAllMpa() {
-        log.debug("/getAllMpa");
-        return storage.getAllMpa();
-    }
+//    public List<Mpa> getAllMpa() { //TODO вынес
+//        log.debug("/getAllMpa");
+//        return storage.getAllMpa();
+//    }
 
-    public Mpa getMpaById(Integer mpaId) {
-        log.debug("/getMpaById");
-        log.debug("income mpa id: " + mpaId);
-        if (mpaId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        return storage.getMpaById(mpaId);
-    }
+//    public Mpa getMpaById(Integer mpaId) { //TODO вынес
+//        log.debug("/getMpaById");
+//        log.debug("income mpa id: " + mpaId);
+//        if (mpaId == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
+//        return storage.getMpaById(mpaId);
+//    }
 
     public List<Genre> getAllGenres() {
         log.debug("/getAllGenres");

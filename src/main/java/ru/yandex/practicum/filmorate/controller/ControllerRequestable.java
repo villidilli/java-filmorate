@@ -12,4 +12,6 @@ public abstract class ControllerRequestable<T extends Requestable> {
     abstract T create(T obj, BindingResult bindResult);
 
     abstract T update(T obj, BindingResult bindResult);
+
+    abstract T getById(Integer objId);
 }

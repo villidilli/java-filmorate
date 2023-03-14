@@ -3,8 +3,10 @@ package ru.yandex.practicum.filmorate.dao;
 public enum DbQuery {
     USERS_TABLE("users"),
     FILMS_TABLE("films"),
+    MPA_TABLE("mpa"),
     USER_ID("id_user"),
     FILM_ID("id_film"),
+    MPA_ID("id_mpa"),
     USER_GET_ALL("SELECT * FROM users"),
     FILM_GET_ALL("SELECT * FROM films ORDER BY id_film"),
     MPA_GET_ALL("SELECT * FROM mpa ORDER BY id_mpa"),
@@ -14,6 +16,7 @@ public enum DbQuery {
     USER_GET_BY_ID("SELECT * FROM users WHERE id_user=?"),
     FILM_GET_BY_ID("SELECT * FROM films WHERE id_film=?"),
     USER_UPDATE("UPDATE users SET login=?, name=?, email=?, birthday=? WHERE id_user=?"),
+    MPA_UPDATE("UPDATE mpa SET name=? WHERE id_mpa=?"),
     ADD_FRIEND("INSERT INTO user_friend (id_user, id_friend) VALUES (?,?)"),
     GET_FRIENDS_AS_USER("SELECT * FROM users WHERE id_user IN (SELECT id_friend FROM user_friend WHERE id_user= ?)"),
     GET_FRIENDS_AS_ID("SELECT id_friend FROM user_friend WHERE id_user=?"),

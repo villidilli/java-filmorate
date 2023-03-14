@@ -36,6 +36,7 @@ public class FilmController extends ControllerRequestable<Film> {
         return filmService.getAll();
     }
 
+    @Override
     @GetMapping("/films/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Film getById(@PathVariable("id") Integer filmId) {
@@ -82,19 +83,19 @@ public class FilmController extends ControllerRequestable<Film> {
         filmService.deleteLike(filmId, userId);
     }
 
-    @GetMapping("/mpa")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<Mpa> getAllMpa() {
-        log.debug("/getAllMpa");
-        return filmService.getAllMpa();
-    }
+//    @GetMapping("/mpa") //TODO вынес
+//    @ResponseStatus(value = HttpStatus.OK)
+//    public List<Mpa> getAllMpa() {
+//        log.debug("/getAllMpa");
+//        return filmService.getAllMpa();
+//    }
 
-    @GetMapping("/mpa/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public Mpa getMpaById(@PathVariable("id") Integer mpaId) {
-        log.debug("/getMpaById");
-        return filmService.getMpaById(mpaId);
-    }
+//    @GetMapping("/mpa/{id}") //TODO вынес
+//    @ResponseStatus(value = HttpStatus.OK)
+//    public Mpa getMpaById(@PathVariable("id") Integer mpaId) {
+//        log.debug("/getMpaById");
+//        return filmService.getMpaById(mpaId);
+//    }
 
     @GetMapping("/genres")
     @ResponseStatus(value = HttpStatus.OK)

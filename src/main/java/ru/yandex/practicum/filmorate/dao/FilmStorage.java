@@ -31,7 +31,7 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUN
 public class FilmStorage implements RequestableStorage<Film> {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-    private Comparator<Genre> sortGenreById;
+    private final Comparator<Genre> sortGenreById;
 
     @Autowired
     public FilmStorage(JdbcTemplate jdbcTemplate) {
@@ -45,6 +45,7 @@ public class FilmStorage implements RequestableStorage<Film> {
     @Override
     public int addAndReturnId(Film film) {
         log.debug("/addFilmAndReturnId");
+        log.debug("income film: " + film);
         return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
     }
 
@@ -111,23 +112,23 @@ public class FilmStorage implements RequestableStorage<Film> {
         }
     }
 
-    public List<Mpa> getAllMpa() {
-        log.debug("/getAllMpa");
-        try {
-            return jdbcTemplate.query(MPA_GET_ALL.query, new MpaMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
+//    public List<Mpa> getAllMpa() { //TODO вынес
+//        log.debug("/getAllMpa");
+//        try {
+//            return jdbcTemplate.query(MPA_GET_ALL.query, new MpaMapper());
+//        } catch (EmptyResultDataAccessException e) {
+//            return null;
+//        }
+//    }
 
-    public Mpa getMpaById(Integer mpaId) {
-        log.debug("/getMpaById");
-        try {
-            return jdbcTemplate.queryForObject(MPA_GET_BY_ID.query, new MpaMapper(), mpaId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("[id: " + mpaId + "]" + NOT_FOUND_BY_ID);
-        }
-    }
+//    public Mpa getMpaById(Integer mpaId) { //TODO вынес
+//        log.debug("/getMpaById");
+//        try {
+//            return jdbcTemplate.queryForObject(MPA_GET_BY_ID.query, new MpaMapper(), mpaId);
+//        } catch (EmptyResultDataAccessException e) {
+//            throw new NotFoundException("[id: " + mpaId + "]" + NOT_FOUND_BY_ID);
+//        }
+//    }
 
     public void deleteFilmGenre(Film film) {
         log.debug("/deleteFilmGenre");
