@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.Friend;
-import ru.yandex.practicum.filmorate.util.FriendMapper;
+//import ru.yandex.practicum.filmorate.model.Friend;
+//import ru.yandex.practicum.filmorate.util.FriendMapper;
 
 import java.util.List;
 
@@ -21,10 +21,10 @@ public class UserFriendStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Friend> getFriendsAsFriend(Integer userId) { // для короткого представления друзей (только айди)
-        log.debug("/getFriendsAsFriend");
-        return jdbcTemplate.query(GET_FRIENDS_AS_ID.query, new FriendMapper(), userId);
-    }
+//    public List<Friend> getFriendsAsFriend(Integer userId) { // для короткого представления друзей (только айди)
+//        log.debug("/getFriendsAsFriend");
+//        return jdbcTemplate.query(GET_FRIENDS_AS_ID.query, new FriendMapper(), userId);
+//    }
 
     public List<Integer> getMutualFriendsId(Integer userId) {
         return jdbcTemplate.queryForList(COMMON_FRIENDS_USERS.query, Integer.class, userId, userId);

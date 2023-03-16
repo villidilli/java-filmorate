@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -60,9 +61,19 @@ public class UserStorage implements RequestableStorage<User> {
                 .orElse(null);
     }
 
-    public List<User> getFriendsAsUser(Integer userId) { //для полного представления друзей
+    public List<User> getFriendsByUser(Integer userId) { //для полного представления друзей
         log.debug("/getFriendsAsUser");
         log.debug("income userid: " + userId);
         return jdbcTemplate.query(GET_FRIENDS_AS_USER.query, new UserMapper(), userId);
+    }
+
+    public boolean isExist(Integer userId) {
+        log.debug("/isExist");
+        try {
+            jdbcTemplate.queryForMap("SELECT id_user FROM users WHERE id_user = ?", userId);
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
+        return true;
     }
 }

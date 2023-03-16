@@ -14,7 +14,7 @@ import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 
-import ru.yandex.practicum.filmorate.model.Friend;
+//import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
@@ -44,13 +44,13 @@ public class UserService extends ServiceRequestable<User> {
         customValidate(user);
         annotationValidate(bindResult);
         user.setId(storage.addAndReturnId(user));
-        return user;
+        return storage.getById(user.getId());
     }
 
     @Override
     public User update(User user, BindingResult bindResult) {
         log.debug("/update(user)");
-        log.debug("income user: " + user.toString());
+        log.debug("income user: {}", user.toString());
         annotationValidate(bindResult);
         customValidate(user);
         isExist(user.getId());
@@ -61,29 +61,29 @@ public class UserService extends ServiceRequestable<User> {
     @Override
     public List<User> getAll() {
         log.debug("/getAll(user)");
-        List<User> users = storage.getAll();
-        users.forEach(user -> user.setFriends(getUserFriends(user)));
-        return users;
+        return storage.getAll();
+//        users.forEach(user -> user.setFriends(getUserFriends(user)));
+//        return users;
     }
 
     @Override
     public User getById(Integer userId) {
         log.debug("/getById(user)");
-        log.debug("income user id: " + userId);
+        log.debug("income user id: {}", userId);
         isExist(userId);
-        User user = storage.getById(userId);
-        user.setFriends(getUserFriends(user));
-        return user;
+        return storage.getById(userId);
+//        user.setFriends(getUserFriends(user));
+//        return user;
     }
 
     public List<User> getFriendsById(Integer userId) {
         log.debug("/getFriendsById");
         log.debug("income user id: " + userId);
         isExist(userId);
-        List<User> friends = storage.getFriendsAsUser(userId);
-        log.debug("list user friends :" + friends);
-        friends.forEach(friend -> friend.setFriends(getUserFriends(friend)));
-        return friends;
+        return storage.getFriendsByUser(userId);
+//        log.debug("list user friends :" + friends);
+//        friends.forEach(friend -> friend.setFriends(getUserFriends(friend)));
+//        return friends;
     }
 
     public List<User> getCommonFriends(Integer user1Id, Integer user2Id) {
@@ -91,16 +91,16 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("income user1-id / user2-id: [" + user1Id + "/" + user2Id + "]");
         isExist(user1Id);
         isExist(user2Id);
-        List<User> user1friends = storage.getFriendsAsUser(user1Id);
+        List<User> user1friends = storage.getFriendsByUser(user1Id);
         log.debug("list friends user1: " + user1friends);
-        List<User> user2friends = storage.getFriendsAsUser(user2Id);
+        List<User> user2friends = storage.getFriendsByUser(user2Id);
         log.debug("list friends user2: " + user2friends);
-        List<User> commonFriends = user1friends.stream()
+        return user1friends.stream()
                 .filter(user2friends::contains)
                 .collect(Collectors.toList());
-        log.debug("common friends: " + commonFriends);
-        commonFriends.forEach(user -> user.setFriends(getUserFriends(user)));
-        return commonFriends;
+//        log.debug("common friends: " + commonFriends);
+//        commonFriends.forEach(user -> user.setFriends(getUserFriends(user)));
+//        return commonFriends;
     }
 
     public void addFriend(int id, int friendId) {
@@ -130,26 +130,27 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("/isExist(user)");
         log.debug("income id: " + id);
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
+        if (!storage.isExist(id)) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
+//        if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 
-    protected Boolean getStatusFriendship(Integer userId, Integer checkedUserId) {
-        log.debug("getStatusFriendship");
-        log.debug("income userId / checkedUserId [" + userId + "/" + checkedUserId + "]");
-        List<Integer> userMutualFriends = friendStorage.getMutualFriendsId(userId);
-        log.debug("user mutual friendsId: " + userMutualFriends);
-        return userMutualFriends.contains(checkedUserId);
-    }
+//    protected Boolean getStatusFriendship(Integer userId, Integer checkedUserId) {
+//        log.debug("getStatusFriendship");
+//        log.debug("income userId / checkedUserId [" + userId + "/" + checkedUserId + "]");
+//        List<Integer> userMutualFriends = friendStorage.getMutualFriendsId(userId);
+//        log.debug("user mutual friendsId: " + userMutualFriends);
+//        return userMutualFriends.contains(checkedUserId);
+//    }
 
-    private List<Friend> getUserFriends(User user) {
-        log.debug("getUserFriends");
-        log.debug("income user: " + user.toString());
-        List<Friend> friends = friendStorage.getFriendsAsFriend(user.getId());
-        log.debug("list user friends :" + friends);
-        friends.forEach(friend -> {
-            Boolean status = getStatusFriendship(user.getId(), friend.getId());
-            friend.setStatusFriendship(status);
-        });
-        return friends;
-    }
+//    private List<Friend> getUserFriends(User user) {
+//        log.debug("getUserFriends");
+//        log.debug("income user: " + user.toString());
+//        List<Friend> friends = friendStorage.getFriendsAsFriend(user.getId());
+//        log.debug("list user friends :" + friends);
+//        friends.forEach(friend -> {
+//            Boolean status = getStatusFriendship(user.getId(), friend.getId());
+//            friend.setStatusFriendship(status);
+//        });
+//        return friends;
+//    }
 }
