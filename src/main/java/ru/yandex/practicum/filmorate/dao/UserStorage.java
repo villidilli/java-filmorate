@@ -76,4 +76,9 @@ public class UserStorage implements RequestableStorage<User> {
         }
         return true;
     }
+
+    public List<User> getCommonFriends(int userId1, int userId2) {
+        log.debug("/getCommonFriends");
+        return jdbcTemplate.query(GET_COMMON_FRIENDS.query, new UserMapper(), userId1, userId2);
+    }
 }

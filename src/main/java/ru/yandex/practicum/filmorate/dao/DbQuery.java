@@ -75,7 +75,18 @@ public enum DbQuery {
             "LEFT JOIN MPA m ON F.ID_MPA = M.ID_MPA " +
             "LEFT JOIN FILM_LIKE fl ON f.ID_FILM = fl.ID_FILM " +
             "WHERE f.ID_FILM = ? " +
-            "GROUP BY f.ID_FILM, film_name, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.ID_MPA, mpa_name");
+            "GROUP BY f.ID_FILM, film_name, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.ID_MPA, mpa_name"),
+    GET_COMMON_FRIENDS(
+            "SELECT res.id_user, u.LOGIN, u.NAME, u.EMAIL, u.BIRTHDAY " +
+            "FROM " +
+                    "(SELECT f1.id_friend AS id_user " +
+                    "FROM " +
+                        "(SELECT id_friend FROM USER_FRIEND uf WHERE id_user = ?) f1 " +
+                    "JOIN " +
+                        "(SELECT id_friend FROM USER_FRIEND uf WHERE id_user = ?) f2 " +
+                    "ON f1.id_friend = f2.id_friend) res " +
+            "JOIN USERS u ON res.id_user = u.ID_USER"
+    );
 
     final String query;
 

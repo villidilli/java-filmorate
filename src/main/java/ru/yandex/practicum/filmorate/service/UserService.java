@@ -91,13 +91,14 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("income user1-id / user2-id: [" + user1Id + "/" + user2Id + "]");
         isExist(user1Id);
         isExist(user2Id);
-        List<User> user1friends = storage.getFriendsByUser(user1Id);
-        log.debug("list friends user1: " + user1friends);
-        List<User> user2friends = storage.getFriendsByUser(user2Id);
-        log.debug("list friends user2: " + user2friends);
-        return user1friends.stream()
-                .filter(user2friends::contains)
-                .collect(Collectors.toList());
+        return storage.getCommonFriends(user1Id, user2Id);
+//        List<User> user1friends = storage.getFriendsByUser(user1Id);
+//        log.debug("list friends user1: " + user1friends);
+//        List<User> user2friends = storage.getFriendsByUser(user2Id);
+//        log.debug("list friends user2: " + user2friends);
+//        return user1friends.stream()
+//                .filter(user2friends::contains)
+//                .collect(Collectors.toList());
 //        log.debug("common friends: " + commonFriends);
 //        commonFriends.forEach(user -> user.setFriends(getUserFriends(user)));
 //        return commonFriends;
