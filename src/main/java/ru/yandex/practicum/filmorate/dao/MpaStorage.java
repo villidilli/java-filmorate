@@ -50,7 +50,7 @@ public class MpaStorage implements RequestableStorage<Mpa> {
     @Override
     public Mpa getById(Integer mpaId) {
         log.debug("/getById");
-        log.debug("income id: " + mpaId);
+        log.debug("income id: {}", mpaId);
         try {
             return jdbcTemplate.queryForObject(MPA_GET_BY_ID.query, new MpaMapper(), mpaId);
         } catch (EmptyResultDataAccessException e) {

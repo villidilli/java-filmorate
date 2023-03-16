@@ -57,21 +57,19 @@ public class FilmService extends ServiceRequestable<Film> {
     @Override
     public Film create(Film film, BindingResult bindResult) {
         log.debug("/create(Film)");
-        log.debug("income film: " + film.toString());
+        log.debug("income film: {}", film.toString());
         customValidate(film);
         annotationValidate(bindResult);
-        film.setId(storage.addAndReturnId(film));
-        film.setMpa(mpaService.getById(film.getMpa().getId()));
-        film.setGenres(genreService.getGenresWithName(film));
-        film.setRate(likeStorage.getRateByFilmId(film.getId()));
+        int filmId = storage.addAndReturnId(film);
+        film.setId(filmId);
         filmGenreStorage.addFilmGenres(film);
-        return film;
+        return storage.getById(filmId);
     }
 
     @Override
     public Film update(Film film, BindingResult bindResult) {
         log.debug("/update(Film)");
-        log.debug("income film: " + film.toString());
+        log.debug("income film: {}", film.toString());
         annotationValidate(bindResult);
         customValidate(film);
         isExist(film.getId());
@@ -84,33 +82,21 @@ public class FilmService extends ServiceRequestable<Film> {
     @Override
     public List<Film> getAll() {
         log.debug("/getAll(Films)");
-        List<Film> films = storage.getAll();
-        for (Film film : films) {
-            film.setMpa(mpaService.getById(film.getMpa().getId()));
-            film.setGenres(filmGenreStorage.getFilmGenres(film.getId()));
-            film.setRate(likeStorage.getRateByFilmId(film.getId()));
-        }
-        return films;
+        return storage.getAll();
     }
 
     @Override
     public Film getById(Integer filmId) {
         log.debug("/getById(Film)");
-        log.debug("income film id: " + filmId);
+        log.debug("income film id: {}", filmId);
         isExist(filmId);
-        Film film = storage.getById(filmId);
-        log.debug("return from db film: " + film.toString());
-        film.setGenres(filmGenreStorage.getFilmGenres(filmId));
-        film.setMpa(mpaService.getById(film.getMpa().getId()));
-        film.setRate(likeStorage.getRateByFilmId(filmId));
-        return film;
+        return storage.getById(filmId);
     }
 
     public List<Film> getPopularFilms(Integer countFilms) {
         log.debug("/getPopularFilm");
-        List<Film> films = getAll();
-        films.sort(sortFilmByRate);
-        return films.stream().limit(countFilms).collect(Collectors.toList());
+//        List<Film> films = getAll();
+        return storage.getPopularFilms(countFilms);
     }
 
     public void addLike(Integer filmId, Integer userId) {
@@ -138,8 +124,9 @@ public class FilmService extends ServiceRequestable<Film> {
     @Override
     protected void isExist(Integer id) {
         log.debug("/isExist(Film)");
-        log.debug("income film id: " + id);
+        log.debug("income film id: {}", id);
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
-        if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
+        if (!storage.isExist(id)) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
+//        if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 }

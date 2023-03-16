@@ -4,7 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import org.springframework.stereotype.Repository;
@@ -16,8 +19,6 @@ import ru.yandex.practicum.filmorate.util.*;
 
 import java.util.*;
 
-import java.util.stream.Collectors;
-
 import static ru.yandex.practicum.filmorate.dao.DbQuery.*;
 
 @Repository
@@ -25,6 +26,8 @@ import static ru.yandex.practicum.filmorate.dao.DbQuery.*;
 public class FilmStorage implements RequestableStorage<Film> {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private Map<Integer, List<Genre>> idFilmWithGenres;
+    private List<Film> filmsWithoutGenres;
 
     @Autowired
     public FilmStorage(JdbcTemplate jdbcTemplate) {
@@ -53,18 +56,38 @@ public class FilmStorage implements RequestableStorage<Film> {
                 film.getId());
     }
 
+    public List<Film> getPopularFilms(int countFilms) {
+        log.debug("/getPopularFilms");
+        Map<Integer, List<Genre>> allFilmsIdWithGenres =
+                jdbcTemplate.query(GET_ALL_FILMS_GENRES.query, new GenresExtractor());
+        List<Film> filmsWithoutGenres =
+                jdbcTemplate.query(GET_POPULAR_FILMS_WITHOUT_GENRES.query, new FilmMapper(), countFilms);
+        return collectGenresToFilm(allFilmsIdWithGenres, filmsWithoutGenres);
+    }
+
     @Override
     public List<Film> getAll() {
         log.debug("/getAllFilms");
-        return jdbcTemplate.query(FILM_GET_ALL.query, new FilmMapper());
+        Map<Integer, List<Genre>> allFilmsIdWithGenres =
+                jdbcTemplate.query(GET_ALL_FILMS_GENRES.query, new GenresExtractor());
+        List<Film> filmsWithoutGenres = jdbcTemplate.query(GET_FILMS_WITHOUT_GENRES.query, new FilmMapper());
+        return collectGenresToFilm(allFilmsIdWithGenres, filmsWithoutGenres);
+    }
+
+    private List<Film> collectGenresToFilm(Map<Integer, List<Genre>> allFilmsIdWithGenres, List<Film> films) {
+        films.iterator().forEachRemaining(film -> {
+            List<Genre> genres = allFilmsIdWithGenres.get(film.getId());
+            if (genres != null) film.setGenres(genres);});
+        return films;
     }
 
     @Override
     public Film getById(Integer filmId) {
         log.debug("/getFilmByID");
-        return jdbcTemplate.query(FILM_GET_BY_ID.query, new FilmMapper(), filmId).stream()
-                .findAny()
-                .orElse(null);
+        Map<Integer, List<Genre>> allFilmsIdWithGenres =
+                jdbcTemplate.query(GET_GENRES_BY_FILM_ID.query, new GenresExtractor(), filmId);
+        List<Film> film = jdbcTemplate.query(GET_FILM_BY_ID_WITHOUT_GENRES.query, new FilmMapper(), filmId);
+        return collectGenresToFilm(allFilmsIdWithGenres, film).get(0);
     }
 
     private Map<String, Object> convertFilmToRow(Film film) {
@@ -76,5 +99,15 @@ public class FilmStorage implements RequestableStorage<Film> {
         param.put("duration", film.getDuration());
         param.put("id_mpa", film.getMpa().getId());
         return param;
+    }
+
+    public boolean isExist(Integer filmId) {
+        log.debug("/isExist");
+        try {
+            jdbcTemplate.queryForMap("SELECT id_film FROM films WHERE id_film = ?", filmId);
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 @Slf4j
 public class FilmMapper implements RowMapper<Film> {
+    private MpaMapper mpaMapper = new MpaMapper();
     @Override
     public Film mapRow(ResultSet rs, int rowNum) {
         log.debug("/mapRow");
@@ -22,7 +23,8 @@ public class FilmMapper implements RowMapper<Film> {
             film.setDescription(rs.getString("description"));
             film.setReleaseDate(rs.getDate("release_date").toLocalDate());
             film.setDuration(rs.getLong("duration"));
-            film.getMpa().setId(rs.getInt("id_mpa"));
+            film.setMpa(mpaMapper.mapRow(rs, rowNum));
+            film.setRate(rs.getInt("rate"));
             return film;
         } catch (SQLException e) {
             throw new MapperException("[" + e.getClass().getSimpleName() + "] " + e.getMessage());
