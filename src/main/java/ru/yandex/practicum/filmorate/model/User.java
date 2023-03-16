@@ -2,14 +2,9 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 
-import net.minidev.json.annotate.JsonIgnore;
-
 import javax.validation.constraints.*;
 
 import java.time.LocalDate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
@@ -25,6 +20,4 @@ public class User extends Requestable {
     private String email;
     @PastOrPresent(message = "Дата рождения не должна быть в будущем времени")
     private LocalDate birthday;
-//    @JsonIgnore
-//    private List<Friend> friends = new ArrayList<>();
 }

@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.relational.core.sql.In;
+
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import org.springframework.stereotype.Repository;
@@ -26,8 +25,6 @@ import static ru.yandex.practicum.filmorate.dao.DbQuery.*;
 public class FilmStorage implements RequestableStorage<Film> {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-    private Map<Integer, List<Genre>> idFilmWithGenres;
-    private List<Film> filmsWithoutGenres;
 
     @Autowired
     public FilmStorage(JdbcTemplate jdbcTemplate) {
@@ -46,7 +43,7 @@ public class FilmStorage implements RequestableStorage<Film> {
 
     @Override
     public void update(Film film) {
-        log.debug("/updateFilm");
+        log.debug("/update");
         jdbcTemplate.update(FILM_UPDATE_FILMS.query,
                 film.getName(),
                 film.getDescription(),
@@ -75,9 +72,11 @@ public class FilmStorage implements RequestableStorage<Film> {
     }
 
     private List<Film> collectGenresToFilm(Map<Integer, List<Genre>> allFilmsIdWithGenres, List<Film> films) {
+        log.debug("/collectGenresToFilm");
         films.iterator().forEachRemaining(film -> {
             List<Genre> genres = allFilmsIdWithGenres.get(film.getId());
-            if (genres != null) film.setGenres(genres);});
+            if (genres != null) film.setGenres(genres);
+        });
         return films;
     }
 

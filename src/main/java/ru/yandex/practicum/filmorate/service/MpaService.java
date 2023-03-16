@@ -39,16 +39,16 @@ public class MpaService extends ServiceRequestable<Mpa> {
     @Override
     public Mpa create(Mpa mpa, BindingResult bindResult) {
         log.debug("/create");
-        log.debug("income mpa: " + mpa);
+        log.debug("income mpa: {}", mpa);
         annotationValidate(bindResult);
         mpa.setId(storage.addAndReturnId(mpa));
-        return mpa;
+        return storage.getById(mpa.getId());
     }
 
     @Override
     public Mpa update(Mpa mpa, BindingResult bindResult) {
         log.debug("/update");
-        log.debug("income mpa: " + mpa);
+        log.debug("income mpa: {}", mpa);
         isExist(mpa.getId());
         storage.update(mpa);
         return getById(mpa.getId());
@@ -57,19 +57,18 @@ public class MpaService extends ServiceRequestable<Mpa> {
     @Override
     public Mpa getById(Integer mpaId) {
         log.debug("/getById");
+        log.debug("mpaId: {}", mpaId);
         isExist(mpaId);
         return storage.getById(mpaId);
     }
 
     @Override
-    protected void customValidate(Mpa mpa) {
-        log.debug("/customValidate");
-    }
+    protected void customValidate(Mpa mpa) {}
 
     @Override
     protected void isExist(Integer id) {
         log.debug("/isExist(Mpa)");
-        log.debug("income mpa id: " + id);
+        log.debug("income mpa id: {}", id);
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }

@@ -39,12 +39,14 @@ public class FilmController extends ControllerRequestable<Film> {
     @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Film getById(@PathVariable("id") Integer filmId) {
+        log.debug("/getById");
         return filmService.getById(filmId);
     }
 
     @GetMapping("/popular")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Film> getPopularFilms(@RequestParam(value = "count", defaultValue = "10") Integer outputLimit) {
+        log.debug("/getPopularFilms");
         return filmService.getPopularFilms(outputLimit);
     }
 

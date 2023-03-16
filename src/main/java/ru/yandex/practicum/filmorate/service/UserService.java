@@ -14,12 +14,9 @@ import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 
-//import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
-
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
@@ -40,7 +37,7 @@ public class UserService extends ServiceRequestable<User> {
     @Override
     public User create(User user, BindingResult bindResult) {
         log.debug("/create(user)");
-        log.debug("income user: " + user.toString());
+        log.debug("income user: {}", user.toString());
         customValidate(user);
         annotationValidate(bindResult);
         user.setId(storage.addAndReturnId(user));
@@ -62,8 +59,6 @@ public class UserService extends ServiceRequestable<User> {
     public List<User> getAll() {
         log.debug("/getAll(user)");
         return storage.getAll();
-//        users.forEach(user -> user.setFriends(getUserFriends(user)));
-//        return users;
     }
 
     @Override
@@ -72,56 +67,43 @@ public class UserService extends ServiceRequestable<User> {
         log.debug("income user id: {}", userId);
         isExist(userId);
         return storage.getById(userId);
-//        user.setFriends(getUserFriends(user));
-//        return user;
     }
 
     public List<User> getFriendsById(Integer userId) {
         log.debug("/getFriendsById");
-        log.debug("income user id: " + userId);
+        log.debug("income user id: {}", userId);
         isExist(userId);
         return storage.getFriendsByUser(userId);
-//        log.debug("list user friends :" + friends);
-//        friends.forEach(friend -> friend.setFriends(getUserFriends(friend)));
-//        return friends;
     }
 
     public List<User> getCommonFriends(Integer user1Id, Integer user2Id) {
         log.debug("/getCommonFriends");
-        log.debug("income user1-id / user2-id: [" + user1Id + "/" + user2Id + "]");
+        log.debug("user1Id: {}, userId2: {}", user1Id, user2Id);
         isExist(user1Id);
         isExist(user2Id);
         return storage.getCommonFriends(user1Id, user2Id);
-//        List<User> user1friends = storage.getFriendsByUser(user1Id);
-//        log.debug("list friends user1: " + user1friends);
-//        List<User> user2friends = storage.getFriendsByUser(user2Id);
-//        log.debug("list friends user2: " + user2friends);
-//        return user1friends.stream()
-//                .filter(user2friends::contains)
-//                .collect(Collectors.toList());
-//        log.debug("common friends: " + commonFriends);
-//        commonFriends.forEach(user -> user.setFriends(getUserFriends(user)));
-//        return commonFriends;
     }
 
-    public void addFriend(int id, int friendId) {
+    public void addFriend(int userId, int friendId) {
         log.debug("/addFriend");
-        isExist(id);
+        log.debug("userID: {}, friendId: {}", userId, friendId);
+        isExist(userId);
         isExist(friendId);
-        friendStorage.addFriend(id, friendId);
+        friendStorage.addFriend(userId, friendId);
     }
 
-    public void deleteFriend(Integer id, Integer friendId) {
+    public void deleteFriend(Integer userId, Integer friendId) {
         log.debug("/deleteFriend");
-        isExist(id);
+        log.debug("userId: {}, friendId: {}", userId, friendId);
+        isExist(userId);
         isExist(friendId);
-        friendStorage.deleteFriend(id, friendId);
+        friendStorage.deleteFriend(userId, friendId);
     }
 
     @Override
     protected void customValidate(User user) throws ValidateException {
         log.debug("customValidate(user)");
-        log.debug("income user: " + user.toString());
+        log.debug("income user: {}", user.toString());
         if (user.getLogin().contains(" ")) throw new ValidateException("[Login] -> " + LOGIN_NOT_HAVE_SPACE);
         if (user.getName() == null || user.getName().isEmpty()) user.setName(user.getLogin());
     }
@@ -129,29 +111,8 @@ public class UserService extends ServiceRequestable<User> {
     @Override
     protected void isExist(Integer id) {
         log.debug("/isExist(user)");
-        log.debug("income id: " + id);
+        log.debug("income id: {}", id);
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (!storage.isExist(id)) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
-//        if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
-
-//    protected Boolean getStatusFriendship(Integer userId, Integer checkedUserId) {
-//        log.debug("getStatusFriendship");
-//        log.debug("income userId / checkedUserId [" + userId + "/" + checkedUserId + "]");
-//        List<Integer> userMutualFriends = friendStorage.getMutualFriendsId(userId);
-//        log.debug("user mutual friendsId: " + userMutualFriends);
-//        return userMutualFriends.contains(checkedUserId);
-//    }
-
-//    private List<Friend> getUserFriends(User user) {
-//        log.debug("getUserFriends");
-//        log.debug("income user: " + user.toString());
-//        List<Friend> friends = friendStorage.getFriendsAsFriend(user.getId());
-//        log.debug("list user friends :" + friends);
-//        friends.forEach(friend -> {
-//            Boolean status = getStatusFriendship(user.getId(), friend.getId());
-//            friend.setStatusFriendship(status);
-//        });
-//        return friends;
-//    }
 }

@@ -38,6 +38,7 @@ public class UserController extends ControllerRequestable<User> {
     @GetMapping("/{id}/friends")
     @ResponseStatus(value = HttpStatus.OK)
     public List<User> getFriendsById(@PathVariable Integer id) {
+        log.debug("/getFriendsById");
         return service.getFriendsById(id);
     }
 
@@ -45,6 +46,7 @@ public class UserController extends ControllerRequestable<User> {
     @ResponseStatus(value = HttpStatus.OK)
     public List<User> getCommonFriends(@PathVariable Integer id,
                                        @PathVariable Integer otherId) {
+        log.debug("/getCommonFriends");
         return service.getCommonFriends(id, otherId);
     }
 
@@ -52,6 +54,7 @@ public class UserController extends ControllerRequestable<User> {
     @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public User getById(@PathVariable Integer id) {
+        log.debug("/getById");
         return service.getById(id);
     }
 

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 @Slf4j
 public class FilmMapper implements RowMapper<Film> {
-    private MpaMapper mpaMapper = new MpaMapper();
+    private final MpaMapper mpaMapper = new MpaMapper();
     @Override
     public Film mapRow(ResultSet rs, int rowNum) {
         log.debug("/mapRow");

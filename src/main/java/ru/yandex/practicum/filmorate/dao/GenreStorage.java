@@ -12,8 +12,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+
 import ru.yandex.practicum.filmorate.util.GenreMapper;
 
 import java.util.Comparator;
@@ -51,7 +53,7 @@ public class GenreStorage implements RequestableStorage<Genre> {
     @Override
     public Genre getById(Integer genreId) {
         log.debug("/getById");
-        log.debug("income id: " + genreId);
+        log.debug("income id: {}", genreId);
         try {
             return jdbcTemplate.queryForObject(GENRE_GET_BY_ID.query, new GenreMapper(), genreId);
         } catch (EmptyResultDataAccessException e) {
@@ -62,23 +64,14 @@ public class GenreStorage implements RequestableStorage<Genre> {
     @Override
     public int addAndReturnId(Genre genre) {
         log.debug("/addGenreAndReturnId");
-        log.debug("income genre: " + genre);
+        log.debug("income genre: {}", genre.toString());
         return jdbcInsert.executeAndReturnKey(Map.of("name", genre.getName())).intValue();
     }
 
     @Override
     public void update(Genre genre) {
         log.debug("/update");
-        log.debug("income genre: " + genre);
+        log.debug("income genre: {}", genre);
         jdbcTemplate.update(MPA_UPDATE.query, genre.getId());
-    }
-
-    public List<Genre> getGenresWithName(Film film) {
-        log.debug("/getGenresWithNameFromFilm");
-        return film.getGenres().stream()
-                .map(Genre::getId)
-                .map(this::getById)
-                .sorted(sortGenreById)
-                .collect(Collectors.toList());
     }
 }

@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.util.MpaMapper;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,14 +60,14 @@ public class MpaStorage implements RequestableStorage<Mpa> {
     @Override
     public int addAndReturnId(Mpa mpa) {
         log.debug("/addFilmAndReturnId");
-        log.debug("income mpa: " + mpa);
+        log.debug("income mpa: {}", mpa);
         return jdbcInsert.executeAndReturnKey(Map.of("name", mpa.getName())).intValue();
     }
 
     @Override
     public void update(Mpa mpa) {
         log.debug("/update");
-        log.debug("income mpa: " + mpa);
+        log.debug("income mpa: {}", mpa);
         jdbcTemplate.update(MPA_UPDATE.query, mpa.getId());
     }
 }

@@ -10,17 +10,15 @@ import org.springframework.validation.BindingResult;
 
 import ru.yandex.practicum.filmorate.dao.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.dao.FilmStorage;
-
 import ru.yandex.practicum.filmorate.dao.FilmLikeStorage;
+
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
-
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
@@ -93,14 +91,15 @@ public class FilmService extends ServiceRequestable<Film> {
         return storage.getById(filmId);
     }
 
-    public List<Film> getPopularFilms(Integer countFilms) {
+    public List<Film> getPopularFilms(Integer outputLimit) {
         log.debug("/getPopularFilm");
-//        List<Film> films = getAll();
-        return storage.getPopularFilms(countFilms);
+        log.debug("output limit: {}", outputLimit);
+        return storage.getPopularFilms(outputLimit);
     }
 
     public void addLike(Integer filmId, Integer userId) {
         log.debug("/addLike");
+        log.debug("filmId: {}, userId: {}", filmId, userId);
         isExist(filmId);
         userService.isExist(userId);
         likeStorage.addLike(filmId, userId);
@@ -108,6 +107,7 @@ public class FilmService extends ServiceRequestable<Film> {
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
+        log.debug("filmId: {}, userId: {}", filmId, userId);
         isExist(filmId);
         userService.isExist(userId);
         likeStorage.deleteLike(filmId, userId);
@@ -116,7 +116,7 @@ public class FilmService extends ServiceRequestable<Film> {
     @Override
     protected void customValidate(Film film) throws ValidateException {
         log.debug("customValidate(film)");
-        log.debug("income film: " + film.toString());
+        log.debug("income film: {}", film.toString());
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
             throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
     }
@@ -127,6 +127,5 @@ public class FilmService extends ServiceRequestable<Film> {
         log.debug("income film id: {}", id);
         if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
         if (!storage.isExist(id)) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
-//        if (storage.getById(id) == null) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 }
