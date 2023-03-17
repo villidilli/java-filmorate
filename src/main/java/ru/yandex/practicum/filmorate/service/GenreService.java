@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import org.springframework.validation.BindingResult;
-
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -22,7 +20,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_I
 
 @Service
 @Slf4j
-public class GenreService extends ServiceRequestable<Genre> {
+public class GenreService {
     private final GenreStorage storage;
 
     @Autowired
@@ -30,31 +28,11 @@ public class GenreService extends ServiceRequestable<Genre> {
         this.storage = storage;
     }
 
-    @Override
     public List<Genre> getAll() {
         log.debug("/getAllGenres");
         return storage.getAll();
     }
 
-    @Override
-    public Genre create(Genre genre, BindingResult bindResult) {
-        log.debug("/create");
-        log.debug("income genre: {}", genre);
-        annotationValidate(bindResult);
-        genre.setId(storage.addAndReturnId(genre));
-        return storage.getById(genre.getId());
-    }
-
-    @Override
-    public Genre update(Genre genre, BindingResult bindResult) {
-        log.debug("/update");
-        log.debug("income genre: {}", genre);
-        isExist(genre.getId());
-        storage.update(genre);
-        return getById(genre.getId());
-    }
-
-    @Override
     public Genre getById(Integer genreId) {
         log.debug("/getById");
         log.debug("genreId: {}", genreId);
@@ -62,10 +40,6 @@ public class GenreService extends ServiceRequestable<Genre> {
         return storage.getById(genreId);
     }
 
-    @Override
-    protected void customValidate(Genre genre) {}
-
-    @Override
     protected void isExist(Integer id) {
         log.debug("/isExist(Genre)");
         log.debug("income genre id: {}", id);

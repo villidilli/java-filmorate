@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import org.springframework.validation.BindingResult;
-
 import ru.yandex.practicum.filmorate.dao.MpaStorage;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -22,7 +20,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_I
 
 @Service
 @Slf4j
-public class MpaService extends ServiceRequestable<Mpa> {
+public class MpaService {
     private final MpaStorage storage;
 
     @Autowired
@@ -30,31 +28,11 @@ public class MpaService extends ServiceRequestable<Mpa> {
         this.storage = storage;
     }
 
-    @Override
     public List<Mpa> getAll() {
         log.debug("/getAll");
         return storage.getAll();
     }
 
-    @Override
-    public Mpa create(Mpa mpa, BindingResult bindResult) {
-        log.debug("/create");
-        log.debug("income mpa: {}", mpa);
-        annotationValidate(bindResult);
-        mpa.setId(storage.addAndReturnId(mpa));
-        return storage.getById(mpa.getId());
-    }
-
-    @Override
-    public Mpa update(Mpa mpa, BindingResult bindResult) {
-        log.debug("/update");
-        log.debug("income mpa: {}", mpa);
-        isExist(mpa.getId());
-        storage.update(mpa);
-        return getById(mpa.getId());
-    }
-
-    @Override
     public Mpa getById(Integer mpaId) {
         log.debug("/getById");
         log.debug("mpaId: {}", mpaId);
@@ -62,10 +40,6 @@ public class MpaService extends ServiceRequestable<Mpa> {
         return storage.getById(mpaId);
     }
 
-    @Override
-    protected void customValidate(Mpa mpa) {}
-
-    @Override
     protected void isExist(Integer id) {
         log.debug("/isExist(Mpa)");
         log.debug("income mpa id: {}", id);

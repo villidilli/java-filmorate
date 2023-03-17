@@ -37,7 +37,7 @@ public class FilmStorage implements RequestableStorage<Film> {
     @Override
     public int addAndReturnId(Film film) {
         log.debug("/addFilmAndReturnId");
-        log.debug("income film: " + film);
+        log.debug("income film: {}", film);
         return jdbcInsert.executeAndReturnKey(convertFilmToRow(film)).intValue();
     }
 
