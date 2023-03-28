@@ -6,66 +6,126 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.validation.BindingResult;
+
+import ru.yandex.practicum.filmorate.dao.FilmGenreStorage;
+import ru.yandex.practicum.filmorate.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.dao.FilmLikeStorage;
+
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.StorageRequestable;
 
 import java.time.LocalDate;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static ru.yandex.practicum.filmorate.exception.NotFoundException.NOT_FOUND_BY_ID;
+import static ru.yandex.practicum.filmorate.exception.ValidateException.ID_NOT_IS_BLANK;
 import static ru.yandex.practicum.filmorate.exception.ValidateException.RELEASE_DATE_INVALID;
-import static ru.yandex.practicum.filmorate.util.Message.*;
 
 @Service
 @Slf4j
 public class FilmService extends ServiceRequestable<Film> {
     public static final LocalDate BIRTHDAY_CINEMA = LocalDate.of(1895, 12, 28);
-    private final ServiceRequestable<User> userService;
-    private final Comparator<Film> popularDescComparator;
+    private final UserService userService;
+    private final MpaService mpaService;
+    private final GenreService genreService;
+    private final FilmGenreStorage filmGenreStorage;
+    private final FilmStorage storage;
+    private final FilmLikeStorage likeStorage;
+    private final Comparator<Film> sortFilmByRate;
 
     @Autowired
-    public FilmService(StorageRequestable<Film> storage, ServiceRequestable<User> userService) {
-        super.storage = storage;
+    public FilmService(FilmStorage storage,
+                       UserService userService,
+                       MpaService mpaService,
+                       GenreService genreService,
+                       FilmGenreStorage filmGenreStorage,
+                       FilmLikeStorage filmLikeStorage) {
+        this.storage = storage;
         this.userService = userService;
-        popularDescComparator = Comparator.comparing(Film::getCountUserlikes).reversed();
+        this.mpaService = mpaService;
+        this.genreService = genreService;
+        this.filmGenreStorage = filmGenreStorage;
+        this.likeStorage = filmLikeStorage;
+        sortFilmByRate = Comparator.comparing(Film::getRate).reversed();
+    }
+
+    @Override
+    public Film create(Film film, BindingResult bindResult) {
+        log.debug("/create(Film)");
+        log.debug("income film: {}", film.toString());
+        customValidate(film);
+        annotationValidate(bindResult);
+        int filmId = storage.addAndReturnId(film);
+        film.setId(filmId);
+        filmGenreStorage.addFilmGenres(film);
+        return storage.getById(filmId);
+    }
+
+    @Override
+    public Film update(Film film, BindingResult bindResult) {
+        log.debug("/update(Film)");
+        log.debug("income film: {}", film.toString());
+        annotationValidate(bindResult);
+        customValidate(film);
+        isExist(film.getId());
+        filmGenreStorage.deleteFilmGenre(film);
+        storage.update(film);
+        filmGenreStorage.addFilmGenres(film);
+        return getById(film.getId());
+    }
+
+    @Override
+    public List<Film> getAll() {
+        log.debug("/getAll(Films)");
+        return storage.getAll();
+    }
+
+    @Override
+    public Film getById(Integer filmId) {
+        log.debug("/getById(Film)");
+        log.debug("income film id: {}", filmId);
+        isExist(filmId);
+        return storage.getById(filmId);
+    }
+
+    public List<Film> getPopularFilms(Integer outputLimit) {
+        log.debug("/getPopularFilm");
+        log.debug("output limit: {}", outputLimit);
+        return storage.getPopularFilms(outputLimit);
     }
 
     public void addLike(Integer filmId, Integer userId) {
         log.debug("/addLike");
+        log.debug("filmId: {}, userId: {}", filmId, userId);
         isExist(filmId);
         userService.isExist(userId);
-        storage.getById(filmId).addLike(userId);
-        log.debug(LOG_ADD_LIKE.message, userId, filmId);
+        likeStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.debug("/deleteLike");
+        log.debug("filmId: {}, userId: {}", filmId, userId);
         isExist(filmId);
         userService.isExist(userId);
-        storage.getById(filmId).deleteLike(userId);
-        log.debug(LOG_DELETE_LIKE.message, userId, filmId);
-    }
-
-    public List<Film> getPopularFilms(Integer countFilms) {
-        log.debug("/getPopularFilm");
-        List<Film> films = sortFilms(popularDescComparator);
-        log.debug(LOG_POPULAR_FILMS.message, countFilms, films);
-        return films.stream().limit(countFilms).collect(Collectors.toList());
+        likeStorage.deleteLike(filmId, userId);
     }
 
     @Override
     protected void customValidate(Film film) throws ValidateException {
+        log.debug("customValidate(film)");
+        log.debug("income film: {}", film.toString());
         if (film.getReleaseDate().isBefore(BIRTHDAY_CINEMA))
             throw new ValidateException("[ReleaseDate] -> " + RELEASE_DATE_INVALID);
-        log.debug(LOG_CUSTOM_VALID_SUCCESS.message);
     }
 
-    private List<Film> sortFilms(Comparator<Film> comparator) {
-        List<Film> list = storage.getAll();
-        list.sort(comparator);
-        return list;
+    @Override
+    protected void isExist(Integer id) {
+        log.debug("/isExist(Film)");
+        log.debug("income film id: {}", id);
+        if (id == null) throw new ValidateException("[id] " + ID_NOT_IS_BLANK);
+        if (!storage.isExist(id)) throw new NotFoundException("[id: " + id + "]" + NOT_FOUND_BY_ID);
     }
 }

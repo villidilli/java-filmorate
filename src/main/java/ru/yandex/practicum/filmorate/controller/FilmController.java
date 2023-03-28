@@ -35,23 +35,24 @@ public class FilmController extends ControllerRequestable<Film> {
         return filmService.getAll();
     }
 
+    @Override
     @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Film getById(@PathVariable("id") Integer filmId) {
+        log.debug("/getById");
         return filmService.getById(filmId);
     }
 
     @GetMapping("/popular")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Film> getPopularFilms(@RequestParam(value = "count",
-                                                    required = false,
-                                                    defaultValue = "10") Integer countFilms) {
-        return filmService.getPopularFilms(countFilms);
+    public List<Film> getPopularFilms(@RequestParam(value = "count", defaultValue = "10") Integer outputLimit) {
+        log.debug("/getPopularFilms");
+        return filmService.getPopularFilms(outputLimit);
     }
 
     @Override
     @PostMapping
-    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseStatus(value = HttpStatus.CREATED)
     public Film create(@Valid @RequestBody Film film, BindingResult bindResult) {
         log.debug("/create");
         return filmService.create(film, bindResult);
@@ -69,6 +70,7 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable("id") Integer filmId,
                         @PathVariable Integer userId) {
+        log.debug("/addLike");
         filmService.addLike(filmId, userId);
     }
 
@@ -76,6 +78,7 @@ public class FilmController extends ControllerRequestable<Film> {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable Integer userId) {
+        log.debug("/deleteLike");
         filmService.deleteLike(filmId, userId);
     }
 }
